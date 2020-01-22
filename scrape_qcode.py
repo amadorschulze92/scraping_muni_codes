@@ -114,7 +114,7 @@ def q_code_main(start_links, base_loc):
                 failed_cities.append([city, [link]])
                 print("missed a section")
             # save file to path
-            path = make_path(base_loc, city, my_doc[1])
+            path = make_path(base_loc, city.replace(" ", ""), my_doc[1])
             with open(f"{path}/{city}.txt", "w") as text_file:
                 text_file.write('\n'.join(my_doc))
             print("-"*5)

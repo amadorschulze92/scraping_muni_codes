@@ -142,7 +142,7 @@ def code_pub_main(start_links, base_loc):
                 # waits for files to download
                 paths = WebDriverWait(driver, 60, 1).until(every_downloads_chrome)
                 print(paths)
-                new_path = make_path(base_loc, city, my_date[0])
+                new_path = make_path(base_loc, city.replace(" ", ""), my_date[0])
                 city = city.replace(" ", "")
                 os.rename(base_loc+"/"+city+".rtf", new_path+"/"+city+".rtf")
                 print(new_path+"/"+city+".rtf")
