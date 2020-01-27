@@ -2,14 +2,15 @@ import pandas as pd
 import numpy as np
 import scrape_codepub
 import scrape_qcode
+import muni_code_scraper
 
 
 def rerun(my_funct, links, base_loc):
-    missed = my_funct(links, base_loc)
+    missed = my_funct(base_loc, links)
     if len(missed) == 0:
         return "All cities completed"
     print("\nRe-run missing cities\n")
-    missed_again = my_funct(missed, base_loc)
+    missed_again = my_funct(base_loc, missed)
     return missed_again
 
 
@@ -28,11 +29,14 @@ def main():
 
     base_loc = '/Users/mschulze/Documents/test_selenium'
 
-    missed_cp = rerun(scrape_codepub.code_pub_main, codepub, base_loc)
-    print(missed_cp)
+    # missed_muni = rerun(muni_code_scraper.municode_scraper, [0], base_loc)
+    # print(missed_muni)
 
-    missed_qc = rerun(scrape_qcode.q_code_main, qcode, base_loc)
-    print(missed_qc)
+    missed_code_p = rerun(scrape_codepub.code_pub_main, codepub, base_loc)
+    print(missed_code_p)
+
+    missed_q_code = rerun(scrape_qcode.q_code_main, qcode, base_loc)
+    print(missed_q_code)
 
 
 if __name__ == '__main__':

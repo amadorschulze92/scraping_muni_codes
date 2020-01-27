@@ -163,14 +163,14 @@ def municode_scraper(base_loc, spec_ind=None):
                   'Suisun City,Vacaville,Vallejo,Cloverdale,Cotati,Healdsburg,Petaluma,Rohnert Park,Santa Rosa,Sebastopol,Sonoma,Windsor'
 
     city_county = city_county.split(",")
-    home_folder = '/Users/kjafshar/Documents/'
-    download_path = base_loc + 'test_folder/'
-    output_dir = download_path + 'results/'
+    # home_folder = '/Users/kjafshar/Documents/'
+    download_path = base_loc + '/test_folder'
+    output_dir = download_path + '/results'
 
-    if download_path not in glob.glob(home_folder + '*/'):
+    if download_path not in glob.glob(base_loc + '/*'):
         os.mkdir(download_path)
 
-    if output_dir not in glob.glob(download_path + '/*/'):
+    if output_dir not in glob.glob(download_path + '/*'):
         os.mkdir(output_dir)
 
     # enables setting of download folder
@@ -185,7 +185,7 @@ def municode_scraper(base_loc, spec_ind=None):
     chrome_options.add_experimental_option('prefs', prefs)
     chrome_options.add_argument('--no-proxy-server')
 
-    driver = webdriver.Chrome('/Users/kjafshar/Documents/MTC-Work/chromeDRIVER', options=chrome_options)
+    driver = webdriver.Chrome('chromedriver', options=chrome_options)
     driver.get('https://library.municode.com/ca')
 
     sleep(5)
@@ -296,7 +296,7 @@ def municode_scraper(base_loc, spec_ind=None):
             for doc in dls:
                 os.remove(doc)
             driver.quit()
-            driver = webdriver.Chrome('/Users/kjafshar/Documents/MTC-Work/chromeDRIVER', options=chrome_options)
+            driver = webdriver.Chrome('chromedriver', options=chrome_options)
             driver.get('https://library.municode.com/ca')
 
             sleep(2)

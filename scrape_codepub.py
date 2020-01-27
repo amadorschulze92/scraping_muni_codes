@@ -117,7 +117,7 @@ def get_effective_date(driver):
     return my_date
 
 
-def code_pub_main(start_links, base_loc):
+def code_pub_main(base_loc, start_links):
     chrome_options = webdriver.ChromeOptions()
     #set download folder
     #configure multiple file download and turn off prompt
@@ -130,7 +130,7 @@ def code_pub_main(start_links, base_loc):
         print(city)
         for link in links:
             try:
-                driver = webdriver.Chrome('/usr/local/bin/chromedriver',options=chrome_options)
+                driver = webdriver.Chrome('chromedriver',options=chrome_options)
                 print(link)
                 driver.get(link)
                 # find effective date
