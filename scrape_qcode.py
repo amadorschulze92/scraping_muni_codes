@@ -33,13 +33,19 @@ def make_path(base_loc, city, my_date):
     return path
 
 
-def find_and_click(driver, the_xpath, section_num):
-    my_text = []
-    my_section = driver.find_elements_by_xpath(the_xpath)
-    my_text.append(my_section[section_num].text)
+def find_click_n_wait(driver, current_xpath, next_xpath, section_num, wait_time, extra_time):
+    """find element click on it and wait till it is present"""
+    my_section = driver.find_elements_by_xpath(current_xpath)
+    click_n_wait(next_xpath, my_section, section_num, wait_time, extra_time)
+
+def click_n_wait(next_xpath, my_section, section_num, wait_time, extra_time):
+    """click on current section and wait for next xpath to be present"""
     my_section[section_num].click()
-    time.sleep(random.uniform(0.2,0.3))
-    return my_text
+    waiting_for_presence_of(next_xpath, wait_time, extra_time)
+
+def waiting_for_presence_of(next_xpath, wait_time, extra_time):
+    waiting = WebDriverWait(driver, wait_time).until(EC.presence_of_element_located((By.XPATH, next_xpath)))
+    time.sleep(extra_time)
 
 
 def q_code_main(start_links, base_loc):
@@ -67,56 +73,49 @@ def q_code_main(start_links, base_loc):
             driver.get(link)
             # find effective date
             driver.switch_to.frame('LEFT')
-            date_xpath = "//*[@id='pgFooter']"
+            date_xpath = "//body[@class='preface']//p"
+            waiting_for_presence_of(date_xpath, 3, 0.1)
             left_text = driver.find_elements_by_xpath(date_xpath)
             for p in left_text:
                 if 'current' in p.text.lower():
                     my_doc.append(p.text)
             driver.switch_to.default_content()
             driver.switch_to.frame('RIGHT')
+            waiting_for_presence_of(my_xpath, 3, 0.1)
             # get to start of doc
-            my_doc = [city]
             for h_sec_num in range(len(driver.find_elements_by_xpath(my_xpath))):
                 h_sections = driver.find_elements_by_xpath(my_xpath)
                 print(h_sections[h_sec_num].text)
                 my_doc.append(h_sections[h_sec_num].text)
-                h_sections[h_sec_num].click()
-                time.sleep(random.uniform(0.2,0.3))
+                click_n_wait(my_xpath, h_sections, h_sec_num, 3, 0.1)
                 for l_sec_num in range(len(driver.find_elements_by_xpath(my_xpath))):
                     try:
                         l_sections = driver.find_elements_by_xpath(my_xpath)
                         my_doc.append(l_sections[l_sec_num].text)
-                        l_sections[l_sec_num].click()
-                        time.sleep(random.uniform(0.2,0.3))
-                        showall = driver.find_elements_by_xpath(showall_xpath)
-                        showall[0].click()
-                        time.sleep(random.uniform(0.2,0.3))
+                        click_n_wait(showall_xpath, l_sections, l_sec_num, 3, 0.1)
+                        find_click_n_wait(driver, showall_xpath, high_title_xpath, 0, 3, 0.1)
                         h_title = driver.find_elements_by_xpath(high_title_xpath)
                         my_doc.append(h_title[0].text)
                         for content, l_title in zip(driver.find_elements_by_xpath(content_xpath), driver.find_elements_by_xpath(low_title_xpath)):
                             my_doc.append(l_title.text)
                             my_doc.append(content.text)
                         up = driver.find_elements_by_xpath(up_xpath)
-                        up[0].click()
-                        time.sleep(random.uniform(0.2,0.3))
+                        click_n_wait(my_xpath, up, 0, 3, 0.1)
                     except:
                         my_doc.append("-_-_-missing-_-_-")
-                        meow = input("X")
+                        missing_sections += 1
                         driver.get(link)
                         driver.switch_to.frame('RIGHT')
-                        h_sections = driver.find_elements_by_xpath(my_xpath)
-                        h_sections[h_sec_num].click()
-                        time.sleep(random.uniform(0.2,0.3))
-                up = driver.find_elements_by_xpath(up_xpath)
-                up[0].click()
-                time.sleep(random.uniform(0.2,0.3))
+                        find_click_n_wait(driver, my_xpath, my_xpath, h_sec_num, 3, 0.1)
+                find_click_n_wait(driver, up_xpath, my_xpath, 0, 3, 0.1)
             if "-_-_-missing-_-_-" in my_doc:
                 failed_cities.append([city, [link]])
-                print("missed a section")
+                print(f"missed {missing_sections} sections")
             # save file to path
             path = make_path(base_loc, city.replace(" ", ""), my_doc[1])
             with open(f"{path}/{city}.txt", "w") as text_file:
                 text_file.write('\n'.join(my_doc))
+            print(f"{path}/{city}.txt")
             print("-"*5)
         driver.close()
         driver.quit()
