@@ -57,6 +57,7 @@ def q_code_main(start_links, base_loc):
             'download.prompt_for_download': 'False'}
     chrome_options.add_experimental_option('prefs', prefs)
     failed_cities = []
+    missing_sections = 0
     my_xpath = "//div[@class='navChildren']//a"
     showall_xpath = "//a[@class='showAll']"
     high_title_xpath = "//div[@class='currentTopic']"
