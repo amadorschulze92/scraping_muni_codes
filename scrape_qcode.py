@@ -13,24 +13,7 @@ from bs4 import BeautifulSoup
 import requests
 import sys
 import os
-
-
-
-def make_path(base_loc, city, my_date):
-    try:
-        match = re.search(r'passed\s(.+?)\.', my_date)
-        date = datetime.strptime(match.group(1), '%B %d, %Y').date()
-    except:
-        match = re.search(r'Ordinance\s(.+?)\sand', my_date)
-        date = datetime.strptime(match.group(1), '%Y-%m').date()
-    num_date = date.strftime('%m-%d-%y')
-    path = f"{base_loc}/{city}/{num_date}"
-    try:
-        os.makedirs(path, exist_ok=True)
-    except OSError:
-        if not os.path.isdir(path):
-            raise
-    return path
+import scrape_codepub
 
 
 def find_click_n_wait(driver, current_xpath, next_xpath, section_num, wait_time, extra_time):
@@ -67,53 +50,60 @@ def q_code_main(base_loc, start_links):
     for city, links in start_links:
         print(city)
         for link in links:
-            driver = webdriver.Chrome('chromedriver',options=chrome_options)
-            print(link)
-            driver.get(link)
             my_doc = [city]
-            driver.get(link)
-            # find effective date
-            driver.switch_to.frame('LEFT')
-            date_xpath = "//body[@class='preface']//p"
-            waiting_for_presence_of(driver, date_xpath, 3, 0.1)
-            left_text = driver.find_elements_by_xpath(date_xpath)
-            for p in left_text:
-                if 'current' in p.text.lower():
-                    my_doc.append(p.text)
-            driver.switch_to.default_content()
-            driver.switch_to.frame('RIGHT')
-            waiting_for_presence_of(driver, my_xpath, 3, 0.1)
-            # get to start of doc
-            for h_sec_num in range(len(driver.find_elements_by_xpath(my_xpath))):
-                h_sections = driver.find_elements_by_xpath(my_xpath)
-                print(h_sections[h_sec_num].text)
-                my_doc.append(h_sections[h_sec_num].text)
-                click_n_wait(driver, my_xpath, h_sections, h_sec_num, 3, 0.1)
-                for l_sec_num in range(len(driver.find_elements_by_xpath(my_xpath))):
-                    try:
-                        l_sections = driver.find_elements_by_xpath(my_xpath)
-                        my_doc.append(l_sections[l_sec_num].text)
-                        click_n_wait(driver, showall_xpath, l_sections, l_sec_num, 3, 0.1)
-                        find_click_n_wait(driver, showall_xpath, high_title_xpath, 0, 3, 0.1)
-                        h_title = driver.find_elements_by_xpath(high_title_xpath)
-                        my_doc.append(h_title[0].text)
-                        for content, l_title in zip(driver.find_elements_by_xpath(content_xpath), driver.find_elements_by_xpath(low_title_xpath)):
-                            my_doc.append(l_title.text)
-                            my_doc.append(content.text)
-                        up = driver.find_elements_by_xpath(up_xpath)
-                        click_n_wait(my_xpath, up, 0, 3, 0.1)
-                    except:
-                        my_doc.append("-_-_-missing-_-_-")
-                        missing_sections += 1
-                        driver.get(link)
-                        driver.switch_to.frame('RIGHT')
-                        find_click_n_wait(driver, my_xpath, my_xpath, h_sec_num, 3, 0.1)
-                find_click_n_wait(driver, up_xpath, my_xpath, 0, 3, 0.1)
-            if "-_-_-missing-_-_-" in my_doc:
+            try:
+                driver = webdriver.Chrome('chromedriver',options=chrome_options)
+                print(link)
+                driver.get(link)
+                driver.get(link)
+                # find effective date
+                driver.switch_to.frame('LEFT')
+                date_xpath = "//body[@class='preface']//p"
+                waiting_for_presence_of(driver, date_xpath, 3, 0.1)
+                left_text = driver.find_elements_by_xpath(date_xpath)
+                for p in left_text:
+                    if 'current' in p.text.lower():
+                        my_doc.append(p.text)
+                driver.switch_to.default_content()
+                driver.switch_to.frame('RIGHT')
+                waiting_for_presence_of(driver, my_xpath, 3, 0.1)
+                # get to start of doc
+                for h_sec_num in range(len(driver.find_elements_by_xpath(my_xpath))):
+                    h_sections = driver.find_elements_by_xpath(my_xpath)
+                    print(h_sections[h_sec_num].text)
+                    my_doc.append(h_sections[h_sec_num].text)
+                    click_n_wait(driver, my_xpath, h_sections, h_sec_num, 3, 0.1)
+                    for l_sec_num in range(len(driver.find_elements_by_xpath(my_xpath))):
+                        try:
+                            l_sections = driver.find_elements_by_xpath(my_xpath)
+                            my_doc.append(l_sections[l_sec_num].text)
+                            click_n_wait(driver, showall_xpath, l_sections, l_sec_num, 3, 0.1)
+                            find_click_n_wait(driver, showall_xpath, high_title_xpath, 0, 3, 0.1)
+                            h_title = driver.find_elements_by_xpath(high_title_xpath)
+                            my_doc.append(h_title[0].text)
+                            for content, l_title in zip(driver.find_elements_by_xpath(content_xpath), driver.find_elements_by_xpath(low_title_xpath)):
+                                my_doc.append(l_title.text)
+                                my_doc.append(content.text)
+                            up = driver.find_elements_by_xpath(up_xpath)
+                            click_n_wait(my_xpath, up, 0, 3, 0.1)
+                        except:
+                            my_doc.append("-_-_-missing-_-_-")
+                            missing_sections += 1
+                            driver.get(link)
+                            driver.switch_to.frame('RIGHT')
+                            find_click_n_wait(driver, my_xpath, my_xpath, h_sec_num, 3, 0.1)
+                    find_click_n_wait(driver, up_xpath, my_xpath, 0, 3, 0.1)
+                except:
+                    my_doc.append("-_-_-broken-_-_-")
+            if "-_-_-broken-_-_-" in my_doc:
+                failed_cities.append([city, [link]])
+                print("scrape failed")
+            elif "-_-_-missing-_-_-" in my_doc:
                 failed_cities.append([city, [link]])
                 print(f"missed {missing_sections} sections")
+
             # save file to path
-            path = make_path(base_loc, city.replace(" ", ""), my_doc[1])
+            path = scrape_codepub.make_path(base_loc+'/test_folder/results', city.replace(" ", ""), my_doc[1])
             with open(f"{path}/{city}.txt", "w") as text_file:
                 text_file.write('\n'.join(my_doc))
             print(f"{path}/{city}.txt")

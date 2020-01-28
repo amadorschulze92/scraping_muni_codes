@@ -82,14 +82,17 @@ def save_doc(driver):
     return driver
 
 
-def make_path(base_loc, city, my_date):
-    try:
-        match = re.search(r'passed\s(.+?)\.', my_date)
-        date = datetime.strptime(match.group(1), '%B %d, %Y').date()
-    except:
-        match = re.search(r'Ordinance\s(.+?)\sand', my_date)
-        date = datetime.strptime(match.group(1), '%Y-%m').date()
-    num_date = date.strftime('%m-%d-%y')
+def make_path(base_loc, city, messy_text):
+    if re.search(r'passed\s(.+?)\.', messy_text):
+        match = re.search(r'passed\s(.+?)\.', messy_text)
+        match_date = datetime.strptime(match.group(1), '%B %d, %Y').date()
+    elif re.search(r'the\s(.+?)\scode\ssupplement\.', messy_text):
+        match = re.search(r'the\s(.+?)\scode\ssupplement\.', messy_text)
+        try:
+            match_date = datetime.strptime(match.group(1), '%Y-%m').date()
+        except:
+            match_date = datetime.strptime(match.group(1), '%B %Y').date()
+    num_date = match_date.strftime('%m-%d-%y')
     path = f"{base_loc}/{city}/{num_date}"
     try:
         os.makedirs(path, exist_ok=True)
@@ -121,7 +124,7 @@ def code_pub_main(base_loc, start_links):
     chrome_options = webdriver.ChromeOptions()
     #set download folder
     #configure multiple file download and turn off prompt
-    prefs = {'download.default_directory' : base_loc,
+    prefs = {'download.default_directory' : base_loc + '/test_folder/results',
             'profile.default_content_setting_values.automatic_downloads': 1,
             'download.prompt_for_download': 'False'}
     chrome_options.add_experimental_option('prefs', prefs)
@@ -142,9 +145,9 @@ def code_pub_main(base_loc, start_links):
                 # waits for files to download
                 paths = WebDriverWait(driver, 60, 1).until(every_downloads_chrome)
                 print(paths)
-                new_path = make_path(base_loc, city.replace(" ", ""), my_date[0])
+                new_path = make_path(base_loc+'/test_folder/results', city.replace(" ", ""), my_date[0])
                 city = city.replace(" ", "")
-                os.rename(base_loc+"/"+city+".rtf", new_path+"/"+city+".rtf")
+                os.rename(base_loc+'/test_folder/results'+'/'+city+".rtf", new_path+"/"+city+".rtf")
                 print(new_path+"/"+city+".rtf")
                 driver.close()
                 driver.quit()
