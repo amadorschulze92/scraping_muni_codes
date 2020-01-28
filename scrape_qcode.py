@@ -93,15 +93,14 @@ def q_code_main(base_loc, start_links):
                             driver.switch_to.frame('RIGHT')
                             find_click_n_wait(driver, my_xpath, my_xpath, h_sec_num, 3, 0.1)
                     find_click_n_wait(driver, up_xpath, my_xpath, 0, 3, 0.1)
-                except:
-                    my_doc.append("-_-_-broken-_-_-")
+            except:
+                my_doc.append("-_-_-broken-_-_-")
             if "-_-_-broken-_-_-" in my_doc:
                 failed_cities.append([city, [link]])
                 print("scrape failed")
             elif "-_-_-missing-_-_-" in my_doc:
                 failed_cities.append([city, [link]])
                 print(f"missed {missing_sections} sections")
-
             # save file to path
             path = scrape_codepub.make_path(base_loc+'/test_folder/results', city.replace(" ", ""), my_doc[1])
             with open(f"{path}/{city}.txt", "w") as text_file:
