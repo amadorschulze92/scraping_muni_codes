@@ -242,9 +242,8 @@ def municode_scraper(base_loc, spec_ind=None):
             # format update date
 
             update_date = update_date.split(' ')[-3:]
-
-            update_date = f"{update_date[0][:3]}_{update_date[1].replace(',', '')}_{update_date[2]}"
-
+            update_date = datetime.strptime("-".join(update_date), '%B-%d-%Y').date()
+            update_date = update_date.strftime('%m-%d-%y')
 
             # check for popup-window
             sleep(1)
