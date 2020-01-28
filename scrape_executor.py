@@ -27,10 +27,10 @@ def main():
     codepub = zip(df_codepub["city"], df_codepub["links"])
     qcode = zip(df_qcode["city"], df_qcode["links"])
 
-    base_loc = '/Users/mschulze/Documents/test_selenium'
+    base_loc = '/Users/mschulze/Documents/test_selenium/'
 
-    # missed_muni = rerun(muni_code_scraper.municode_scraper, [0], base_loc)
-    # print(missed_muni)
+    missed_muni = rerun(muni_code_scraper.municode_scraper, [], base_loc)
+    print(missed_muni)
 
     missed_code_p = rerun(scrape_codepub.code_pub_main, codepub, base_loc)
     print(missed_code_p)

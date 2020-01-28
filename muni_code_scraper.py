@@ -164,13 +164,13 @@ def municode_scraper(base_loc, spec_ind=None):
 
     city_county = city_county.split(",")
     # home_folder = '/Users/kjafshar/Documents/'
-    download_path = base_loc + '/test_folder'
-    output_dir = download_path + '/results'
+    download_path = base_loc + 'test_folder/'
+    output_dir = download_path + 'results/'
 
-    if download_path not in glob.glob(base_loc + '/*'):
+    if download_path not in glob.glob(base_loc + '*/'):
         os.mkdir(download_path)
 
-    if output_dir not in glob.glob(download_path + '/*'):
+    if output_dir not in glob.glob(download_path + '/*/'):
         os.mkdir(output_dir)
 
     # enables setting of download folder
