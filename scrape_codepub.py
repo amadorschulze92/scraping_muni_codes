@@ -102,7 +102,7 @@ def make_path(base_loc, city, messy_text):
     return path
 
 
-def get_effective_date(driver):
+def get_update_date(driver):
     my_date = []
     date_xpath = "//*[@id='pgFooter']"
     switch_date_xpath = "//p"
@@ -129,33 +129,28 @@ def code_pub_main(base_loc, start_links):
             'download.prompt_for_download': 'False'}
     chrome_options.add_experimental_option('prefs', prefs)
     failed_cities = []
-    for city, links in start_links:
-        print(city)
-        for link in links:
-            try:
-                driver = webdriver.Chrome('chromedriver',options=chrome_options)
-                print(link)
-                driver.get(link)
-                # find effective date
-                my_date = get_effective_date(driver)
-                # find and click all necessary checkboxes
-                driver = handle_checkboxes(driver, 0.4, 0.5)
-                # save the document
-                driver = save_doc(driver)
-                # waits for files to download
-                paths = WebDriverWait(driver, 60, 1).until(every_downloads_chrome)
-                print(paths)
-                new_path = make_path(base_loc+'/test_folder/results', city.replace(" ", ""), my_date[0])
-                city = city.replace(" ", "")
-                os.rename(base_loc+'/test_folder/results'+'/'+city+".rtf", new_path+"/"+city+".rtf")
-                print(new_path+"/"+city+".rtf")
-                driver.close()
-                driver.quit()
-            except:
-                print("failed! try again later")
-                failed_cities.append([city, [link]])
-            print("-"*5)
-    print("-"*10)
-    for x in failed_cities:
-        print(x)
-    return failed_cities
+    city = start_link[0]
+    links = start_link[1]
+    print(city)
+    for link in links:
+        try:
+            driver = webdriver.Chrome('chromedriver',options=chrome_options)
+            print(link)
+            driver.get(link)
+            # find effective date
+            my_date = get_update_date(driver)
+            # find and click all necessary checkboxes
+            driver = handle_checkboxes(driver, 0.4, 0.5)
+            # save the document
+            driver = save_doc(driver)
+            # waits for files to download
+            paths = WebDriverWait(driver, 60, 1).until(every_downloads_chrome)
+            print(paths)
+            new_path = make_path(base_loc+'/test_folder/results', city.replace(" ", ""), my_date[0])
+            city = city.replace(" ", "")
+            os.rename(base_loc+'/test_folder/results'+'/'+city+".rtf", new_path+"/"+city+".rtf")
+            print(new_path+"/"+city+".rtf")
+            driver.close()
+            driver.quit()
+        except:
+            return start_links
