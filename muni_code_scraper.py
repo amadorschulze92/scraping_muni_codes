@@ -92,7 +92,7 @@ def toc_crawler(driver):
 def page_crawler(driver, s3_bucket, s3_path, s3_table, base_loc, muni, update_date):
     element = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "section[id='toc']")))
     toc = [link for link in driver.find_element_by_css_selector("section[id='toc']").find_elements_by_tag_name("li")]
-    for chap in toc[:5]:
+    for chap in toc:
         title = chap.text
         print(title)
         chap.click()
@@ -210,11 +210,11 @@ def municode_scraper(s3_bucket, s3_path, s3_table, base_loc, url):
 
         # create named files
 
-        print(f'finished crawling for {muni}')
-
         # if page had division early on it two backs
 
         driver.quit()
+
+        return ''
 
     except:
 

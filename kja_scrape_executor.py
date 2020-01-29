@@ -4,14 +4,17 @@ import scrape_codepub
 import scrape_qcode
 import muni_code_scraper
 from time import sleep
+from time import time
 import os
 import glob
 
 
 def rerun(my_funct, s3_bucket, s3_path, s3_table, base_loc, muni_tuple):
 
+    start = time()
     miss = my_funct(s3_bucket, s3_path, s3_table, base_loc, muni_tuple[1])
     sleep(2)
+
     if miss:
         print(f'{muni_tuple[0]} has failed, rerunning')
         final = my_funct(s3_bucket, s3_path, s3_table, base_loc, muni_tuple[1])
@@ -21,7 +24,8 @@ def rerun(my_funct, s3_bucket, s3_path, s3_table, base_loc, muni_tuple):
         else:
             print('written successfully after second run')
     else:
-        print(f"{muni_tuple[0]} completed")
+
+        print(f"{muni_tuple[0]} completed in {time() - start} seconds")
 
 
 def s3_status_check(S3_bucket, S3_path):
