@@ -59,7 +59,6 @@ def generate_municode_links():
     return muni_links
 
 
-
 def extract_text(driver):
     filler_text = "\nSHARE LINK TO SECTION\nPRINT SECTION\nDOWNLOAD (DOCX) OF SECTIONS\nEMAIL SECTION"
     element = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div[ng-switch-when='CHUNKS']")))
@@ -114,8 +113,6 @@ def page_crawler(driver, s3_bucket, s3_path, s3_table, base_loc, muni, update_da
         close_button = driver.find_elements_by_css_selector('i[class="fa-fw fa fa-chevron-down"]')
         if close_button:
             close_button[0].click()
-
-
 
 
 def check_for_s3_delta(muni, title, text, s3_table):
