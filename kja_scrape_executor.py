@@ -42,9 +42,6 @@ def main():
     df_amlegal = og_df.loc[og_df["link_type"] == "amlegal"]
     df_other = og_df.loc[og_df["link_type"] == "other"]
 
-    codepub = zip(df_codepub["city"], df_codepub["links"])
-    qcode = zip(df_qcode["city"], df_qcode["links"])
-
     base_loc = '/Users/kjafshar/Documents/test_folder/'
 
     s3_bucket = 'mtc-redshift-upload'
@@ -53,20 +50,30 @@ def main():
 
     s3_table = s3_status_check(s3_bucket, s3_path)
 
-    missed_muni = []
+    missed_municipal = []
 
     sleep(2)
 
     for m in tuples_muni[:1]:
-        missed = rerun(muni_code_scraper.municode_scraper, s3_bucket, s3_path, s3_table, base_loc, m)
-        if missed:
-            missed_muni.append(missed)
+        missed_municode = rerun(muni_code_scraper.municode_scraper, s3_bucket, s3_path, s3_table, base_loc, m)
+        if missed_municode:
+            missed_municipal.append(missed_municode)
         else:
             print("municode links successfully crawled")
 
-    # missed_code_p = rerun(scrape_codepub.code_pub_main, codepub, base_loc)
+    for city, link in zip(df_codepub["city"], df_codepub["links"]):
+        missed_codepub = rerun(scrape_codepub.code_pub_main, s3_bucket, s3_path, s3table, base_loc, [city, link])
+        if missed_codepub:
+            missed_municipal.append(missed_codepub)
+        else:
+            print("code publishing links successfully crawled")
 
-    # missed_q_code = rerun(scrape_qcode.q_code_main, qcode, base_loc)
+    for city, link in zip(df_qcode["city"], df_qcode["links"]):
+        missed_qcode = rerun(scrape_qcode.q_code_main, s3_bucket, s3_path, s3table, base_loc, [city, link])
+        if missed_qcode:
+            missed_municipal.append(missed_qcode)
+        else:
+            print("q code links successfully crawled")
 
     if len(missed_muni) > 0:
         for item in missed_muni:
