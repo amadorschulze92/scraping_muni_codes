@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
-import scrape_codepub
-import scrape_qcode
+import codepub_scraper
+import qcode_scraper
 import muni_code_scraper
 from time import sleep
 from time import time
