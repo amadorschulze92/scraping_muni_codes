@@ -13,7 +13,7 @@ from bs4 import BeautifulSoup
 import requests
 import sys
 import os
-import scrape_codepub
+import codepub_scraper
 
 
 def find_click_n_wait(driver, current_xpath, next_xpath, section_num, wait_time, extra_time):
