@@ -12,12 +12,12 @@ import glob
 def rerun(my_funct, s3_bucket, s3_path, s3_table, base_loc, muni_tuple):
 
     start = time()
-    miss = my_funct(s3_bucket, s3_path, s3_table, base_loc, muni_tuple[1])
+    miss = my_funct(s3_bucket, s3_path, s3_table, base_loc, muni_tuple)
     sleep(2)
 
     if miss:
         print(f'{muni_tuple[0]} has failed, rerunning')
-        final = my_funct(s3_bucket, s3_path, s3_table, base_loc, muni_tuple[1])
+        final = my_funct(s3_bucket, s3_path, s3_table, base_loc, muni_tuple)
         if len(final) > 0:
             print(f'{muni_tuple[0]} has failed again')
             return f'{muni_tuple[0]}: {muni_tuple[1]}'

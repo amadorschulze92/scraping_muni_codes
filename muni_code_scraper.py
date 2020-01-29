@@ -159,10 +159,10 @@ def s3_file_writer(s3_bucket, s3_path, s3_table, base_loc, muni, update_date, ti
     # remove any docs left in download folder
 
 
-def municode_scraper(s3_bucket, s3_path, s3_table, base_loc, url):
+def municode_scraper(s3_bucket, s3_path, s3_table, base_loc, muni_tuple):
 
     driver = webdriver.Chrome('/Users/kjafshar/dev/MTC-Work/chromeDRIVER')
-    driver.get(url)
+    driver.get(muni_tuple[1])
 
     sleep(1)
 
