@@ -120,7 +120,7 @@ def get_update_date(driver):
     return my_date
 
 
-def code_pub_main(base_loc, start_links):
+def code_pub_main(s3_bucket, s3_path, s3table, base_loc, start_link):
     chrome_options = webdriver.ChromeOptions()
     #set download folder
     #configure multiple file download and turn off prompt
@@ -153,4 +153,4 @@ def code_pub_main(base_loc, start_links):
             driver.close()
             driver.quit()
         except:
-            return start_links
+            return True

@@ -107,11 +107,11 @@ def q_code_main(s3_bucket, s3_path, s3table, base_loc, start_link):
                 write_to_folder(base_loc, city, level2_title, my_doc, update_date_messy)
                 my_doc = [city]
         except:
-            return start_link
+            return True
         write_to_folder(base_loc, city, my_doc)
     driver.close()
     driver.quit()
     print("-"*5)
     if missing_sections > 0:
-        return start_link
-    return None
+        return True
+    return False
