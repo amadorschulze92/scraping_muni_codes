@@ -60,7 +60,6 @@ def main():
 
     sleep(2)
 
-
     for m in tuples_muni[:1]:
         missed_municode = rerun(muni_code_scraper.municode_scraper, s3_bucket, s3_path, s3_table, base_loc, m)
         if missed_municode:

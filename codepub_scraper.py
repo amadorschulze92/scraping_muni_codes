@@ -133,32 +133,31 @@ def code_pub_main(s3_bucket, s3_path, s3_table, base_loc, start_link):
     chrome_options.add_experimental_option('prefs', prefs)
     failed_cities = []
     city = start_link[0]
-    link = start_link[1][0]
+    links = start_link[1]
     print(city)
-
-    try:
-        driver = webdriver.Chrome(f'{cwd}/chromedriver', options=chrome_options)
-        print(link)
-        driver.get(link)
-        print(1)
-        # find effective date
-        my_date = get_update_date(driver)
-        # find and click all necessary checkboxes
-        driver = handle_checkboxes(driver, 0.4, 0.5)
-        # save the document
-        driver = save_doc(driver)
-        # waits for files to download
-        paths = WebDriverWait(driver, 60, 1).until(every_downloads_chrome)
-        print(paths)
-        new_path = make_path(base_loc+'/test_folder/results', city.replace(" ", ""), my_date[0])
-        print(1)
-        city = city.replace(" ", "")
-#        os.rename(base_loc+'/test_folder/results'+'/'+city+".rtf", new_path+"/"+city+".rtf")
-        print(2)
-        print(new_path+"/"+city+".rtf")
-        driver.close()
-        driver.quit()
-        return False
-
-    except:
-        return True
+    for link in links:
+        try:
+            driver = webdriver.Chrome(f'{cwd}/chromedriver', options=chrome_options)
+            print(link)
+            driver.get(link)
+            print(1)
+            # find effective date
+            my_date = get_update_date(driver)
+            # find and click all necessary checkboxes
+            driver = handle_checkboxes(driver, 0.4, 0.5)
+            # save the document
+            driver = save_doc(driver)
+            # waits for files to download
+            paths = WebDriverWait(driver, 60, 1).until(every_downloads_chrome)
+            print(paths)
+            new_path = make_path(base_loc+'/test_folder/results', city.replace(" ", ""), my_date[0])
+            print(1)
+            city = city.replace(" ", "")
+        #        os.rename(base_loc+'/test_folder/results'+'/'+city+".rtf", new_path+"/"+city+".rtf")
+            print(2)
+            print(new_path+"/"+city+".rtf")
+            driver.close()
+            driver.quit()
+            return False
+        except:
+            return True
