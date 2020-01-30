@@ -40,7 +40,7 @@ def generate_municode_links():
 
     city_county = city_county.split(",")
 
-    driver = webdriver.Chrome('/Users/kjafshar/dev/MTC-Work/chromeDRIVER')
+    driver = webdriver.Chrome('/chromeDRIVER')
     driver.get('https://library.municode.com/ca')
 
     element = WebDriverWait(driver, 20) \
