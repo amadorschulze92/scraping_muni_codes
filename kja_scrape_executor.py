@@ -42,7 +42,7 @@ def main():
     og_df = pd.read_csv("my_links.csv", converters={'links': eval})
     og_df = og_df.drop("Unnamed: 0", axis=1)
 
-    #tuples_muni = muni_code_scraper.generate_municode_links()
+    tuples_muni = muni_code_scraper.generate_municode_links()
     df_codepub = og_df.loc[og_df["link_type"] == "codepub"]
     df_qcode = og_df.loc[og_df["link_type"] == "qcode"]
     df_amlegal = og_df.loc[og_df["link_type"] == "amlegal"]
