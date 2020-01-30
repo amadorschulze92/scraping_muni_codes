@@ -1,4 +1,5 @@
 import pandas as pd
+import sys
 import numpy as np
 import codepub_scraper
 import qcode_scraper
@@ -12,13 +13,13 @@ import glob
 def rerun(my_funct, s3_bucket, s3_path, s3_table, base_loc, muni_tuple):
 
     start = time()
-    miss = my_funct(s3_bucket, s3_path, s3_table, base_loc, muni_tuple[1])
+    miss = my_funct(s3_bucket, s3_path, s3_table, base_loc, muni_tuple)
     sleep(2)
 
     if miss:
         print(f'{muni_tuple[0]} has failed, rerunning')
-        final = my_funct(s3_bucket, s3_path, s3_table, base_loc, muni_tuple[1])
-        if len(final) > 0:
+        final = my_funct(s3_bucket, s3_path, s3_table, base_loc, muni_tuple)
+        if final:
             print(f'{muni_tuple[0]} has failed again')
             return f'{muni_tuple[0]}: {muni_tuple[1]}'
         else:
@@ -33,6 +34,11 @@ def s3_status_check(S3_bucket, S3_path):
 
 
 def main():
+
+    cwd = os.getcwd()
+
+    sys.path.insert(0,cwd + "/" + "chromedriver")
+
     og_df = pd.read_csv("my_links.csv", converters={'links': eval})
     og_df = og_df.drop("Unnamed: 0", axis=1)
 
@@ -54,6 +60,7 @@ def main():
 
     sleep(2)
 
+
     for m in tuples_muni[:1]:
         missed_municode = rerun(muni_code_scraper.municode_scraper, s3_bucket, s3_path, s3_table, base_loc, m)
         if missed_municode:
@@ -61,22 +68,23 @@ def main():
         else:
             print("municode links successfully crawled")
 
+
     for city, link in zip(df_codepub["city"], df_codepub["links"]):
-        missed_codepub = rerun(scrape_codepub.code_pub_main, s3_bucket, s3_path, s3table, base_loc, [city, link])
+        missed_codepub = rerun(codepub_scraper.code_pub_main, s3_bucket, s3_path, s3_table, base_loc, [city, link])
         if missed_codepub:
             missed_municipal.append(missed_codepub)
         else:
             print("code publishing links successfully crawled")
 
     for city, link in zip(df_qcode["city"], df_qcode["links"]):
-        missed_qcode = rerun(scrape_qcode.q_code_main, s3_bucket, s3_path, s3table, base_loc, [city, link])
+        missed_qcode = rerun(qcode_scraper.q_code_main, s3_bucket, s3_path, s3_table, base_loc, [city, link])
         if missed_qcode:
             missed_municipal.append(missed_qcode)
         else:
             print("q code links successfully crawled")
 
-    if len(missed_muni) > 0:
-        for item in missed_muni:
+    if len(missed_municipal) > 0:
+        for item in missed_municipal:
             print(item)
 
 

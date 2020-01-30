@@ -1,7 +1,7 @@
 from selenium import webdriver
 from time import sleep
-import os
 from datetime import datetime
+import os
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -41,7 +41,9 @@ def generate_municode_links():
 
     city_county = city_county.split(",")
 
-    driver = webdriver.Chrome('/Users/kjafshar/dev/MTC-Work/chromeDRIVER')
+    cwd = os.getcwd()
+
+    driver = webdriver.Chrome(f'{cwd}/chromedriver')
     driver.get('https://library.municode.com/ca')
 
     element = WebDriverWait(driver, 20) \
@@ -145,9 +147,9 @@ def s3_file_writer(s3_bucket, s3_path, s3_table, base_loc, muni, update_date, ti
 
         copy_file_to_s3(filename, s3_bucket, s3_key)
         # write to s3
-        #except:
-        #print(f'file issue for {filename}')
-        #print('')
+        # except:
+        # print(f'file issue for {filename}')
+        # print('')
         # os.remove(filename)
         print('file write complete')
         print('')
@@ -155,14 +157,15 @@ def s3_file_writer(s3_bucket, s3_path, s3_table, base_loc, muni, update_date, ti
         print("doc hasn't changed")
         print('')
 
-
     # remove any docs left in download folder
 
 
-def municode_scraper(s3_bucket, s3_path, s3_table, base_loc, url):
+def municode_scraper(s3_bucket, s3_path, s3_table, base_loc, muni_tuple):
 
-    driver = webdriver.Chrome('/Users/kjafshar/dev/MTC-Work/chromeDRIVER')
-    driver.get(url)
+    cwd = os.getcwd()
+
+    driver = webdriver.Chrome(f'{cwd}/chromedriver')
+    driver.get(muni_tuple[1])
 
     sleep(1)
 
@@ -211,12 +214,10 @@ def municode_scraper(s3_bucket, s3_path, s3_table, base_loc, url):
 
         driver.quit()
 
-        return ''
+        return False
 
     except:
 
         driver.quit()
 
-        return "failed"
-
-    driver.quit()
+        return True

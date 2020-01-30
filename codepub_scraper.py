@@ -120,18 +120,26 @@ def get_update_date(driver):
     return my_date
 
 
+<<<<<<< HEAD
 def code_pub_main(s3_bucket, s3_path, s3table, base_loc, start_link):
+=======
+def code_pub_main(s3_bucket, s3_path, s3_table, base_loc, start_link):
+
+    cwd = os.getcwd()
+
+>>>>>>> 09dff60b3815dfa54b34eef82b348e13c9eb9256
     chrome_options = webdriver.ChromeOptions()
-    #set download folder
-    #configure multiple file download and turn off prompt
-    prefs = {'download.default_directory' : base_loc + '/test_folder/results',
-            'profile.default_content_setting_values.automatic_downloads': 1,
-            'download.prompt_for_download': 'False'}
+    # set download folder
+    # configure multiple file download and turn off prompt
+    prefs = {'download.default_directory': base_loc,
+             'profile.default_content_setting_values.automatic_downloads': 1,
+             'download.prompt_for_download': 'False'}
     chrome_options.add_experimental_option('prefs', prefs)
     failed_cities = []
     city = start_link[0]
-    links = start_link[1]
+    link = start_link[1][0]
     print(city)
+<<<<<<< HEAD
     for link in links:
         try:
             driver = webdriver.Chrome('chromedriver',options=chrome_options)
@@ -154,3 +162,31 @@ def code_pub_main(s3_bucket, s3_path, s3table, base_loc, start_link):
             driver.quit()
         except:
             return True
+=======
+
+    try:
+        driver = webdriver.Chrome(f'{cwd}/chromedriver', options=chrome_options)
+        print(link)
+        driver.get(link)
+        print(1)
+        # find effective date
+        my_date = get_update_date(driver)
+        # find and click all necessary checkboxes
+        driver = handle_checkboxes(driver, 0.4, 0.5)
+        # save the document
+        driver = save_doc(driver)
+        # waits for files to download
+        paths = WebDriverWait(driver, 60, 1).until(every_downloads_chrome)
+        print(paths)
+        new_path = make_path(base_loc+'/test_folder/results', city.replace(" ", ""), my_date[0])
+        print(1)
+        city = city.replace(" ", "")
+#        os.rename(base_loc+'/test_folder/results'+'/'+city+".rtf", new_path+"/"+city+".rtf")
+        print(2)
+        print(new_path+"/"+city+".rtf")
+        driver.close()
+        driver.quit()
+        return False
+    except:
+        return True
+>>>>>>> 09dff60b3815dfa54b34eef82b348e13c9eb9256
