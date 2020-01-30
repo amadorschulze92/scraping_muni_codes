@@ -1,6 +1,7 @@
 from selenium import webdriver
 from time import sleep
 from datetime import datetime
+import os
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -40,7 +41,9 @@ def generate_municode_links():
 
     city_county = city_county.split(",")
 
-    driver = webdriver.Chrome('/chromeDRIVER')
+    cwd = os.getcwd()
+
+    driver = webdriver.Chrome(f'{cwd}/chromedriver')
     driver.get('https://library.municode.com/ca')
 
     element = WebDriverWait(driver, 20) \
@@ -159,7 +162,9 @@ def s3_file_writer(s3_bucket, s3_path, s3_table, base_loc, muni, update_date, ti
 
 def municode_scraper(s3_bucket, s3_path, s3_table, base_loc, muni_tuple):
 
-    driver = webdriver.Chrome('/Users/kjafshar/dev/MTC-Work/chromeDRIVER')
+    cwd = os.getcwd()
+
+    driver = webdriver.Chrome(f'{cwd}/chromedriver')
     driver.get(muni_tuple[1])
 
     sleep(1)

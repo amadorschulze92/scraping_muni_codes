@@ -40,6 +40,9 @@ def write_to_folder(base_loc, city, title, my_doc, update_date_messy):
 
 
 def q_code_main(s3_bucket, s3_path, s3table, base_loc, start_link):
+
+    cwd = os.getcwd()
+
     chrome_options = webdriver.ChromeOptions()
     #set download folder
     #configure multiple file download and turn off prompt
@@ -55,12 +58,12 @@ def q_code_main(s3_bucket, s3_path, s3table, base_loc, start_link):
     content_xpath = "//div[@class='content-fragment']"
     up_xpath = "//a[@accesskey='u']"
     city = start_link[0]
-    link = start_link[1]
+    link = start_link[1][0]
     print(city)
     my_doc = [city]
     try:
         # level 1
-        driver = webdriver.Chrome('chromedriver',options=chrome_options)
+        driver = webdriver.Chrome(f'{cwd}/chromedriver', options=chrome_options)
         print(link)
         driver.get(link)
         # get last updated date

@@ -121,22 +121,26 @@ def get_update_date(driver):
 
 
 def code_pub_main(s3_bucket, s3_path, s3_table, base_loc, start_link):
+
+    cwd = os.getcwd()
+
     chrome_options = webdriver.ChromeOptions()
-    #set download folder
-    #configure multiple file download and turn off prompt
-    prefs = {'download.default_directory' : base_loc + '/test_folder/results',
-            'profile.default_content_setting_values.automatic_downloads': 1,
-            'download.prompt_for_download': 'False'}
+    # set download folder
+    # configure multiple file download and turn off prompt
+    prefs = {'download.default_directory': base_loc,
+             'profile.default_content_setting_values.automatic_downloads': 1,
+             'download.prompt_for_download': 'False'}
     chrome_options.add_experimental_option('prefs', prefs)
     failed_cities = []
     city = start_link[0]
-    link = start_link[1]
+    link = start_link[1][0]
     print(city)
 
     try:
-        driver = webdriver.Chrome('chromeDriver',options=chrome_options)
+        driver = webdriver.Chrome(f'{cwd}/chromedriver', options=chrome_options)
         print(link)
         driver.get(link)
+        print(1)
         # find effective date
         my_date = get_update_date(driver)
         # find and click all necessary checkboxes
@@ -147,8 +151,10 @@ def code_pub_main(s3_bucket, s3_path, s3_table, base_loc, start_link):
         paths = WebDriverWait(driver, 60, 1).until(every_downloads_chrome)
         print(paths)
         new_path = make_path(base_loc+'/test_folder/results', city.replace(" ", ""), my_date[0])
+        print(1)
         city = city.replace(" ", "")
-        os.rename(base_loc+'/test_folder/results'+'/'+city+".rtf", new_path+"/"+city+".rtf")
+#        os.rename(base_loc+'/test_folder/results'+'/'+city+".rtf", new_path+"/"+city+".rtf")
+        print(2)
         print(new_path+"/"+city+".rtf")
         driver.close()
         driver.quit()
