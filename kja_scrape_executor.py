@@ -18,7 +18,7 @@ def rerun(my_funct, s3_bucket, s3_path, s3_table, base_loc, muni_tuple):
     if miss:
         print(f'{muni_tuple[0]} has failed, rerunning')
         final = my_funct(s3_bucket, s3_path, s3_table, base_loc, muni_tuple)
-        if len(final) > 0:
+        if final:
             print(f'{muni_tuple[0]} has failed again')
             return f'{muni_tuple[0]}: {muni_tuple[1]}'
         else:
@@ -62,21 +62,21 @@ def main():
             print("municode links successfully crawled")
 
     for city, link in zip(df_codepub["city"], df_codepub["links"]):
-        missed_codepub = rerun(scrape_codepub.code_pub_main, s3_bucket, s3_path, s3table, base_loc, [city, link])
+        missed_codepub = rerun(scrape_codepub.code_pub_main, s3_bucket, s3_path, s3_table, base_loc, [city, link])
         if missed_codepub:
             missed_municipal.append(missed_codepub)
         else:
             print("code publishing links successfully crawled")
 
     for city, link in zip(df_qcode["city"], df_qcode["links"]):
-        missed_qcode = rerun(scrape_qcode.q_code_main, s3_bucket, s3_path, s3table, base_loc, [city, link])
+        missed_qcode = rerun(scrape_qcode.q_code_main, s3_bucket, s3_path, s3_table, base_loc, [city, link])
         if missed_qcode:
             missed_municipal.append(missed_qcode)
         else:
             print("q code links successfully crawled")
 
-    if len(missed_muni) > 0:
-        for item in missed_muni:
+    if len(missed_municipal) > 0:
+        for item in missed_municipal:
             print(item)
 
 

@@ -1,6 +1,5 @@
 from selenium import webdriver
 from time import sleep
-import os
 from datetime import datetime
 
 from selenium.webdriver.common.by import By
@@ -145,16 +144,15 @@ def s3_file_writer(s3_bucket, s3_path, s3_table, base_loc, muni, update_date, ti
 
         copy_file_to_s3(filename, s3_bucket, s3_key)
         # write to s3
-        #except:
-        #print(f'file issue for {filename}')
-        #print('')
+        # except:
+        # print(f'file issue for {filename}')
+        # print('')
         # os.remove(filename)
         print('file write complete')
         print('')
     else:
         print("doc hasn't changed")
         print('')
-
 
     # remove any docs left in download folder
 
@@ -211,12 +209,10 @@ def municode_scraper(s3_bucket, s3_path, s3_table, base_loc, muni_tuple):
 
         driver.quit()
 
-        return ''
+        return False
 
     except:
 
         driver.quit()
 
-        return "failed"
-
-    driver.quit()
+        return True
