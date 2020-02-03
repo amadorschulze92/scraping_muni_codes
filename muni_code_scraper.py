@@ -3,6 +3,7 @@ from time import sleep
 from datetime import datetime
 import os
 
+from muni_scraper_tools import *
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -115,52 +116,6 @@ def page_crawler(driver, s3_bucket, s3_path, s3_table, base_loc, muni, update_da
         close_button = driver.find_elements_by_css_selector('i[class="fa-fw fa fa-chevron-down"]')
         if close_button:
             close_button[0].click()
-
-
-def check_for_s3_delta(muni, title, text, s3_table):
-    return True
-
-
-def s3_file_writer(s3_bucket, s3_path, s3_table, base_loc, muni, update_date, title, text):
-    """
-    This function will combine downloaded docs into a single txt
-
-    :param base_loc: path to download folder
-    :param output_dir: path to output directory
-    :param i: given index of doc
-    :param muni: municipality name
-    :param update_date: data municode updated
-    :param names: list of article names for given muni
-    :return: nothing
-    """
-
-    s3_key = (s3_path +
-              muni + "/" +
-              update_date + '/' +
-              title + ".txt")
-
-    filename = base_loc + title + '.txt'
-
-    if check_for_s3_delta(muni, title, text, s3_table):
-        with open(filename, 'w') as f:
-            f.write(text)
-
-        try:
-            copy_file_to_s3(filename, s3_bucket, s3_key)
-            os.remove(filename)
-            print('file write complete')
-            print('')
-        # write to s3
-        except:
-            print(f'file issue for {filename}')
-            print('')
-            os.remove(filename)
-
-    else:
-        print("doc hasn't changed")
-        print('')
-
-    # remove any docs left in download folder
 
 
 def municode_scraper(s3_bucket, s3_path, s3_table, base_loc, muni_tuple):

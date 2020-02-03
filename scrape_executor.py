@@ -1,20 +1,22 @@
 import pandas as pd
 import sys
 import numpy as np
+from time import sleep
+import time
+import os
+import glob
+
+from muni_scraper_tools import *
 import codepub_scraper
 import qcode_scraper
 import muni_code_scraper
-from time import sleep
-from time import time
-import os
-import glob
 
 
 def rerun(my_funct, s3_bucket, s3_path, s3_table, base_loc, muni_tuple):
     """runs a scraper (ie my_funct) for a given muni_tuple which contains
     (city_name, link_to_munipal_code). If that scraper fails rerun will try
     to run the scraper again."""
-    start = time()
+    start = time.time()
     miss = my_funct(s3_bucket, s3_path, s3_table, base_loc, muni_tuple)
     sleep(2)
 
@@ -28,11 +30,7 @@ def rerun(my_funct, s3_bucket, s3_path, s3_table, base_loc, muni_tuple):
             print('written successfully after second run')
     else:
 
-        print(f"{muni_tuple[0]} completed in {time() - start} seconds")
-
-
-def s3_status_check(S3_bucket, S3_path):
-    return True
+        print(f"{muni_tuple[0]} completed in {time.time() - start} seconds")
 
 
 def main():
