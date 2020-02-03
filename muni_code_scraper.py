@@ -145,14 +145,17 @@ def s3_file_writer(s3_bucket, s3_path, s3_table, base_loc, muni, update_date, ti
         with open(filename, 'w') as f:
             f.write(text)
 
-        copy_file_to_s3(filename, s3_bucket, s3_key)
+        try:
+            copy_file_to_s3(filename, s3_bucket, s3_key)
+            os.remove(filename)
+            print('file write complete')
+            print('')
         # write to s3
-        # except:
-        # print(f'file issue for {filename}')
-        # print('')
-        # os.remove(filename)
-        print('file write complete')
-        print('')
+        except:
+            print(f'file issue for {filename}')
+            print('')
+            os.remove(filename)
+
     else:
         print("doc hasn't changed")
         print('')

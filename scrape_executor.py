@@ -55,26 +55,29 @@ def main():
 
     missed_municipal = []
     sleep(2)
-    for m in tuples_muni[:1]:
+    for m in tuples_muni:
         missed_municode = rerun(muni_code_scraper.municode_scraper, s3_bucket, s3_path, s3_table, base_loc, m)
         if missed_municode:
             missed_municipal.append(missed_municode)
         else:
             print("municode links successfully crawled")
-
+    """
     for city, link in zip(df_codepub["city"], df_codepub["links"]):
         missed_codepub = rerun(codepub_scraper.code_pub_main, s3_bucket, s3_path, s3_table, base_loc, [city, link])
         if missed_codepub:
             missed_municipal.append(missed_codepub)
         else:
             print("code publishing links successfully crawled")
+    """
 
+    """
     for city, link in zip(df_qcode["city"], df_qcode["links"]):
         missed_qcode = rerun(qcode_scraper.q_code_main, s3_bucket, s3_path, s3_table, base_loc, [city, link])
         if missed_qcode:
             missed_municipal.append(missed_qcode)
         else:
             print("q code links successfully crawled")
+    """
 
     if len(missed_municipal) > 0:
         for item in missed_municipal:
