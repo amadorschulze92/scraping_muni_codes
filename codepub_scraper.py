@@ -130,7 +130,7 @@ def code_pub_main(s3_bucket, s3_path, s3_table, base_loc, start_link):
             # waits for files to download
             paths = WebDriverWait(driver, 60, 1).until(every_downloads_chrome)
             print(paths)
-            new_path = make_path(base_loc+'/test_folder/results', city.replace(" ", ""), my_date[0])
+            new_path = make_path(base_loc+'results', city.replace(" ", ""), my_date[0])
             print(1)
             city = city.replace(" ", "")
         #        os.rename(base_loc+'/test_folder/results'+'/'+city+".rtf", new_path+"/"+city+".rtf")

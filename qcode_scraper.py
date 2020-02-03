@@ -36,7 +36,7 @@ def waiting_for_presence_of(driver, next_xpath, wait_time, extra_time):
 
 def write_to_folder(base_loc, city, title, my_doc, update_date_messy):
     # save file to path
-    path = muni_scraper_tools.make_path(base_loc+'/test_folder/results', city.replace(" ", ""), update_date_messy)
+    path = muni_scraper_tools.make_path(base_loc+'results', city.replace(" ", ""), update_date_messy)
     with open(f"{path}/{title}.txt", "w") as text_file:
         text_file.write('\n'.join(my_doc))
     print(f"{path}/{title}.txt")
