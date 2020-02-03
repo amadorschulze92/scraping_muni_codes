@@ -41,7 +41,6 @@ def handle_checkboxes(driver, s_sleep, l_sleep):
         if len(driver.find_elements_by_xpath(plus_xpath)) >= 1:
             for button in driver.find_elements_by_xpath(plus_xpath):
                 button.click()
-            print("--> found the plus button")
         # return to the general case
         if len(driver.find_elements_by_xpath(my_xpath)) < 2:
             my_xpath = "//p/input[@type='checkbox']"
@@ -49,7 +48,6 @@ def handle_checkboxes(driver, s_sleep, l_sleep):
     elif len(driver.find_elements_by_xpath(my_xpath)) > 80:
         my_xpath = "//form/p/input[@type='checkbox']"
     # check all the boxes
-    missed_checks = []
     for checkbox in driver.find_elements_by_xpath(my_xpath):
         time.sleep(random.uniform(s_sleep,l_sleep))
         try:
@@ -57,7 +55,6 @@ def handle_checkboxes(driver, s_sleep, l_sleep):
             checkbox.click()
         except:
             missed_checks.append(checkbox)
-    print(f"missed: {len(missed_checks)}")
     return driver
 
 
@@ -120,7 +117,6 @@ def code_pub_main(s3_bucket, s3_path, s3_table, base_loc, start_link):
             driver = webdriver.Chrome(f'{cwd}/chromedriver', options=chrome_options)
             print(link)
             driver.get(link)
-            print(1)
             # find effective date
             my_date = get_update_date(driver)
             # find and click all necessary checkboxes
@@ -131,10 +127,8 @@ def code_pub_main(s3_bucket, s3_path, s3_table, base_loc, start_link):
             paths = WebDriverWait(driver, 60, 1).until(every_downloads_chrome)
             print(paths)
             new_path = make_path(base_loc+'results', city.replace(" ", ""), my_date[0])
-            print(1)
             city = city.replace(" ", "")
         #        os.rename(base_loc+'/test_folder/results'+'/'+city+".rtf", new_path+"/"+city+".rtf")
-            print(2)
             print(new_path+"/"+city+".rtf")
             driver.close()
             driver.quit()
