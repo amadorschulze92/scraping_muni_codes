@@ -13,36 +13,37 @@ from bs4 import BeautifulSoup
 import requests
 import sys
 import os
-import codepub_scraper
+import muni_scraper_tools
 
 
 def find_click_n_wait(driver, current_xpath, next_xpath, section_num, wait_time, extra_time):
-    """find element click on it and wait till it is present"""
+    """find element click on it and wait till next xpath is present"""
     my_section = driver.find_elements_by_xpath(current_xpath)
     click_n_wait(driver, next_xpath, my_section, section_num, wait_time, extra_time)
+
 
 def click_n_wait(driver, next_xpath, my_section, section_num, wait_time, extra_time):
     """click on current section and wait for next xpath to be present"""
     my_section[section_num].click()
     waiting_for_presence_of(driver, next_xpath, wait_time, extra_time)
 
+
 def waiting_for_presence_of(driver, next_xpath, wait_time, extra_time):
+    """wait till xpath is present, but usually needs a little extra time to load"""
     waiting = WebDriverWait(driver, wait_time).until(EC.presence_of_element_located((By.XPATH, next_xpath)))
     time.sleep(extra_time)
 
 
 def write_to_folder(base_loc, city, title, my_doc, update_date_messy):
     # save file to path
-    path = codepub_scraper.make_path(base_loc+'/test_folder/results', city.replace(" ", ""), update_date_messy)
+    path = muni_scraper_tools.make_path(base_loc+'/test_folder/results', city.replace(" ", ""), update_date_messy)
     with open(f"{path}/{title}.txt", "w") as text_file:
         text_file.write('\n'.join(my_doc))
     print(f"{path}/{title}.txt")
 
 
 def q_code_main(s3_bucket, s3_path, s3table, base_loc, start_link):
-
     cwd = os.getcwd()
-
     chrome_options = webdriver.ChromeOptions()
     #set download folder
     #configure multiple file download and turn off prompt
@@ -111,7 +112,6 @@ def q_code_main(s3_bucket, s3_path, s3table, base_loc, start_link):
                 my_doc = [city]
         except:
             return True
-        write_to_folder(base_loc, city, my_doc)
     driver.close()
     driver.quit()
     print("-"*5)
