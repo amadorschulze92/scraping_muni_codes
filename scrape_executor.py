@@ -11,7 +11,9 @@ import glob
 
 
 def rerun(my_funct, s3_bucket, s3_path, s3_table, base_loc, muni_tuple):
-
+    """runs a scraper (ie my_funct) for a given muni_tuple which contains
+    (city_name, link_to_munipal_code). If that scraper fails rerun will try
+    to run the scraper again."""
     start = time()
     miss = my_funct(s3_bucket, s3_path, s3_table, base_loc, muni_tuple)
     sleep(2)
@@ -34,9 +36,7 @@ def s3_status_check(S3_bucket, S3_path):
 
 
 def main():
-
     cwd = os.getcwd()
-
     sys.path.insert(0,cwd + "/" + "chromedriver")
 
     og_df = pd.read_csv("my_links.csv", converters={'links': eval})
@@ -49,17 +49,12 @@ def main():
     df_other = og_df.loc[og_df["link_type"] == "other"]
 
     base_loc = '/Users/kjafshar/Documents/test_folder/'
-
     s3_bucket = 'mtc-redshift-upload'
-
     s3_path = "test_kjafshar/"
-
     s3_table = s3_status_check(s3_bucket, s3_path)
 
     missed_municipal = []
-
     sleep(2)
-
     for m in tuples_muni[:1]:
         missed_municode = rerun(muni_code_scraper.municode_scraper, s3_bucket, s3_path, s3_table, base_loc, m)
         if missed_municode:
