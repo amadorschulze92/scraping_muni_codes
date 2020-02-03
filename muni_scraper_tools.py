@@ -76,3 +76,20 @@ def s3_file_writer(s3_bucket, s3_path, s3_table, base_loc, muni, update_date, ti
 
     # remove any docs left in download folder
 
+
+def find_click_n_wait(driver, current_xpath, next_xpath, section_num, wait_time, extra_time):
+    """find element click on it and wait till next xpath is present"""
+    my_section = driver.find_elements_by_xpath(current_xpath)
+    click_n_wait(driver, next_xpath, my_section, section_num, wait_time, extra_time)
+
+
+def click_n_wait(driver, next_xpath, my_section, section_num, wait_time, extra_time):
+    """click on current section and wait for next xpath to be present"""
+    my_section[section_num].click()
+    waiting_for_presence_of(driver, next_xpath, wait_time, extra_time)
+
+
+def waiting_for_presence_of(driver, next_xpath, wait_time, extra_time):
+    """wait till xpath is present, but usually needs a little extra time to load"""
+    waiting = WebDriverWait(driver, wait_time).until(EC.presence_of_element_located((By.XPATH, next_xpath)))
+    time.sleep(extra_time)
