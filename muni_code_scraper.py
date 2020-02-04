@@ -63,6 +63,10 @@ def generate_municode_links():
 
 
 def extract_text(driver):
+
+    # this code will extract the text from a given page
+
+
     filler_text = "\nSHARE LINK TO SECTION\nPRINT SECTION\nDOWNLOAD (DOCX) OF SECTIONS\nEMAIL SECTION"
     element = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div[ng-switch-when='CHUNKS']")))
     doc = driver.find_element_by_css_selector('ul[class="chunks list-unstyled small-padding"]').text
@@ -71,6 +75,9 @@ def extract_text(driver):
 
 
 def toc_crawler(driver):
+
+    # this code is run for situations where the level 2 is broken into further chunks that aren't visible on the landing page
+
     smalltoc = driver.find_elements_by_css_selector("li[depth='-1']")
     l_2_doc = []
 
@@ -92,6 +99,10 @@ def toc_crawler(driver):
 
 
 def page_crawler(driver, s3_bucket, s3_path, s3_table, base_loc, muni, update_date):
+
+    # this is the code which runs after the driver reaches the muni landing
+    # it will call extraction and toc crawler as needed
+
     element = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "section[id='toc']")))
     toc = [link for link in driver.find_element_by_css_selector("section[id='toc']").find_elements_by_tag_name("li")]
     for chap in toc:
