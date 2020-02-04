@@ -137,7 +137,7 @@ def municode_scraper(s3_bucket, s3_path, s3_table, base_loc, muni_tuple):
     try:
         # update_date = driver.find_element_by_class_name("product-date").text  # update data only visible on actual code page, works as a check
 
-        update_date = WebDriverWait(driver, 2) \
+        update_date = WebDriverWait(driver, 5) \
             .until(EC.element_to_be_clickable((By.CLASS_NAME, "product-date"))).text
 
     except:
