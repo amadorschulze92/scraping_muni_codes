@@ -3,7 +3,7 @@ from time import sleep
 from datetime import datetime
 import os
 
-from muni_scraper_tools import *
+from scraper_tools import *
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC

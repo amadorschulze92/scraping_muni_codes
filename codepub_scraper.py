@@ -13,6 +13,7 @@ from bs4 import BeautifulSoup
 import requests
 import sys
 import os
+import scraper_tools
 
 
 def every_downloads_chrome(driver):
@@ -126,9 +127,9 @@ def code_pub_main(s3_bucket, s3_path, s3_table, base_loc, start_link):
             # waits for files to download
             paths = WebDriverWait(driver, 60, 1).until(every_downloads_chrome)
             print(paths)
-            new_path = make_path(base_loc+'results', city.replace(" ", ""), my_date[0])
+            new_path = scraper_tools.make_path(base_loc+'results', city.replace(" ", ""), my_date[0])
             city = city.replace(" ", "")
-        #        os.rename(base_loc+'/test_folder/results'+'/'+city+".rtf", new_path+"/"+city+".rtf")
+            os.rename(base_loc+'/test_folder/results'+'/'+city+".rtf", new_path+"/"+city+".rtf")
             print(new_path+"/"+city+".rtf")
             driver.close()
             driver.quit()
