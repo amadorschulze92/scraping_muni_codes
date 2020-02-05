@@ -6,7 +6,7 @@ import time
 import os
 import glob
 
-from muni_scraper_tools import *
+from scraper_tools import *
 import codepub_scraper
 import qcode_scraper
 import muni_code_scraper
