@@ -40,6 +40,7 @@ def main():
     og_df = pd.read_csv("my_links.csv", converters={'links': eval})
     og_df = og_df.drop("Unnamed: 0", axis=1)
 
+    print("generating links")
     tuples_muni = muni_code_scraper.generate_municode_links()
     df_codepub = og_df.loc[og_df["link_type"] == "codepub"]
     df_qcode = og_df.loc[og_df["link_type"] == "qcode"]
@@ -54,6 +55,7 @@ def main():
     missed_municipal = []
     sleep(2)
     for m in tuples_muni:
+        print("-"*5)
         missed_municode = rerun(muni_code_scraper.municode_scraper, s3_bucket, s3_path, s3_table, base_loc, m)
         if missed_municode:
             missed_municipal.append(missed_municode)
@@ -61,6 +63,7 @@ def main():
             print("municode links successfully crawled")
 
     for city, link in zip(df_codepub["city"], df_codepub["links"]):
+        print("-"*5)
         missed_codepub = rerun(codepub_scraper.code_pub_main, s3_bucket, s3_path, s3_table, base_loc, [city, link])
         if missed_codepub:
             missed_municipal.append(missed_codepub)
@@ -68,6 +71,7 @@ def main():
             print("code publishing links successfully crawled")
 
     for city, link in zip(df_qcode["city"], df_qcode["links"]):
+        print("-"*5)
         missed_qcode = rerun(qcode_scraper.q_code_main, s3_bucket, s3_path, s3_table, base_loc, [city, link])
         if missed_qcode:
             missed_municipal.append(missed_qcode)
