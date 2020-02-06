@@ -108,7 +108,9 @@ def q_code_main(s3_bucket, s3_path, s3table, base_loc, start_link):
                         driver.switch_to.frame('RIGHT')
                         find_click_n_wait(driver, my_xpath, my_xpath, h_sec_num, 3, 0.1)
                 find_click_n_wait(driver, up_xpath, my_xpath, 0, 3, 0.1)
-                write_to_folder(base_loc, city, level2_title, my_doc, update_date_messy)
+                update_date = scraper_tools.extract_date(update_date_messy)
+                scraper_tools.s3_file_writer(s3_bucket, s3_path, s3_table, base_loc, city, update_date, level2_title, '\n'.join(my_doc))
+                # write_to_folder(base_loc, city, level2_title, my_doc, update_date_messy)
                 my_doc = [city]
         except:
             return True

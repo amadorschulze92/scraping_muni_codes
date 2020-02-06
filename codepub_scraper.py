@@ -74,6 +74,10 @@ def save_doc(driver):
     # wait for page to load
     element = WebDriverWait(driver, 180).until(EC.presence_of_element_located((By.ID, "saveAsSubmit")))
     time.sleep(4)
+    #change doc type
+    dropdown = driver.find_element_by_xpath("//option[@name='TEXT']")
+    dropdown.click()
+    time.sleep(1)
     # click the submit button
     submit_btn = driver.find_element_by_id("saveAsSubmit")
     submit_btn.click()
@@ -98,10 +102,17 @@ def get_update_date(driver):
     return my_date
 
 
+def downloads_done(base_loc, city, iterations):
+    for i in range(iterations):
+        if os.path.isfile(base_loc+'/'+city+'.txt'):
+            return base_loc+'/'+city+'.txt'
+        else:
+            time.sleep(5)
+    print("failed")
+
+
 def code_pub_main(s3_bucket, s3_path, s3_table, base_loc, start_link):
-
     cwd = os.getcwd()
-
     chrome_options = webdriver.ChromeOptions()
     # set download folder
     # configure multiple file download and turn off prompt
@@ -118,19 +129,29 @@ def code_pub_main(s3_bucket, s3_path, s3_table, base_loc, start_link):
             driver = webdriver.Chrome(f'{cwd}/chromedriver', options=chrome_options)
             print(link)
             driver.get(link)
-            # find effective date
-            my_date = get_update_date(driver)
+            # find update date
+            update_date = get_update_date(driver)
             # find and click all necessary checkboxes
             driver = handle_checkboxes(driver, 0.4, 0.5)
             # save the document
             driver = save_doc(driver)
             # waits for files to download
-            paths = WebDriverWait(driver, 60, 1).until(every_downloads_chrome)
-            print(paths)
-            new_path = scraper_tools.make_path(base_loc+'results', city.replace(" ", ""), my_date[0])
             city = city.replace(" ", "")
-            os.rename(base_loc+'/test_folder/results'+'/'+city+".rtf", new_path+"/"+city+".rtf")
-            print(new_path+"/"+city+".rtf")
+            path = downloads_done(base_loc, city, 36)
+            print(path)
+            with open(f"{path}", "r") as f:
+                text_file = f.read()
+            text_file = text_file.replace("Title ", "--lvl2section--Title ")
+            split_section = text_file.split("--lvl2section--")
+            for lvl2_text in split_section:
+                lvl2_header = lvl2_text.split("\n")[1]
+                print(lvl2_header)
+                scraper_tools.s3_file_writer(s3_bucket, s3_path, s3_table, base_loc, city, update_date, lvl2_header, lvl2_text)
+            # new_path = scraper_tools.make_path(base_loc+'results', city, my_date[0])
+            # print(base_loc+'/test_folder/results')
+            # print(new_path+"/"+city+".rtf")
+            # os.rename(base_loc+'/test_folder/results'+'/'+city+".rtf", new_path+"/"+city+".rtf")
+            # print(new_path+"/"+city+".rtf")
             driver.close()
             driver.quit()
             return False
