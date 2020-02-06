@@ -48,6 +48,8 @@ def s3_file_writer(s3_bucket, s3_path, s3_table, base_loc, muni, update_date, ti
     :return: nothing
     """
 
+    title = title.replace("/", '_')
+
     s3_key = (s3_path +
               muni + "/" +
               update_date + '/' +

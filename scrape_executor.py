@@ -47,7 +47,7 @@ def main():
     df_amlegal = og_df.loc[og_df["link_type"] == "amlegal"]
     df_other = og_df.loc[og_df["link_type"] == "other"]
 
-    base_loc = '/Users/kjafshar/Documents/test_folder/'
+    base_loc = '/Users/kjafshar/dev/test_folder/'
     s3_bucket = 'mtc-redshift-upload'
     s3_path = "test_kjafshar/"
     s3_table = s3_status_check(s3_bucket, s3_path)
