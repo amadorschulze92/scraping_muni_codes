@@ -59,8 +59,8 @@ def main():
         missed_municode = rerun(muni_code_scraper.municode_scraper, s3_bucket, s3_path, s3_table, base_loc, m)
         if missed_municode:
             missed_municipal.append(missed_municode)
-        else:
-            print("municode links successfully crawled")
+    if not missed_municipal:
+        print("municode links successfully crawled")
 
     for city, link in zip(df_codepub["city"], df_codepub["links"]):
         print("-"*5)
