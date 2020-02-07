@@ -1,7 +1,5 @@
 from selenium import webdriver
 from time import sleep
-from datetime import datetime
-import os
 
 from scraper_tools import *
 from selenium.common.exceptions import StaleElementReferenceException
@@ -32,7 +30,12 @@ class wait_for_text_to_start_with:
 
     def __call__(self, driver):
         try:
-            element_text = EC._find_element(driver, self.locator).text
+            element_text = EC._find_element(driver, self.locator).text.replace(" modified", '')\
+                                                                        .replace(" Modified", '')\
+                                                                        .replace(" Amended", '')\
+                                                                        .replace(" amended", '')\
+                                                                        .replace(" New", '') \
+                                                                        .replace(" new", '')
             return element_text.startswith(self.text)
         except StaleElementReferenceException:
             return False
@@ -92,7 +95,13 @@ def toc_crawler(driver):
     for level_3_heading in two_toc:
         level_3_heading.click()
 
-        title = level_3_heading.text.split("\n")[0].replace(" modified", '')
+        title = level_3_heading.text.split("\n")[0].replace(" modified", '')\
+            .replace(" Modified", '')\
+            .replace(" Amended", '')\
+            .replace(" amended", '')\
+            .replace(" New", '') \
+            .replace(" new", '')
+
         element = WebDriverWait(driver, 10).until(wait_for_text_to_start_with((By.CSS_SELECTOR, "div[class='chunk-title-wrapper']"), title))
         if not element:
             return True
@@ -102,10 +111,18 @@ def toc_crawler(driver):
         elif driver.find_elements_by_css_selector("div[ng-switch-when='TOC']"):
             level_3_doc = []
             three_toc = level_3_heading.find_elements_by_css_selector("li[depth='-1']")
+
             for level_4_heading in three_toc:
                 level_4_heading.click()
 
-                title = level_4_heading.text.split("\n")[0].replace(" modified", '')
+                title = level_4_heading.text.split("\n")[0].replace(" modified", '')\
+                                                           .replace(" modified", '')\
+                                                           .replace(" Modified", '')\
+                                                           .replace(" Amended", '')\
+                                                           .replace(" amended", '')\
+                                                           .replace(" New", '')\
+                                                           .replace(" new", '')
+
                 element = WebDriverWait(driver, 10).until(wait_for_text_to_start_with((By.CSS_SELECTOR, "div[class='chunk-title-wrapper']"), title))
                 if not element:
                     return True
@@ -118,7 +135,13 @@ def toc_crawler(driver):
                     for level_5_heading in four_toc:
                         level_5_heading.click()
 
-                        title = level_5_heading.text.split("\n")[0].replace(" modified", '')
+                        title = level_5_heading.text.split("\n")[0].replace(" modified", '')\
+                                                                        .replace(" Modified", '')\
+                                                                        .replace(" Amended", '')\
+                                                                        .replace(" amended", '')\
+                                                                        .replace(" New", '') \
+                                                                        .replace(" new", '')
+
                         element = WebDriverWait(driver, 10).until(
                             wait_for_text_to_start_with((By.CSS_SELECTOR, "div[class='chunk-title-wrapper']"), title))
                         if not element:
@@ -138,8 +161,16 @@ def page_crawler(driver, s3_bucket, s3_path, s3_table, base_loc, muni, update_da
     toc = [link for link in driver.find_element_by_css_selector("section[id='toc']").find_elements_by_tag_name("li")]
     for level_2_heading in toc:
 
-        title = level_2_heading.text.split("\n")[0]
-        title = title.replace(" modified", '')
+        # this check and similar ones during the toc_crawler are to ensure the driver has reached the particular page
+        # after clicking on the table of contents link
+        # the toc title needs to be stripped of additional tags added to it
+
+        title = level_2_heading.text.split("\n")[0].replace(" modified", '')\
+                                    .replace(" Modified", '')\
+                                    .replace(" Amended", '')\
+                                    .replace(" amended", '') \
+                                    .replace(" New", '') \
+                                    .replace(" new", '')
 
         print(title)
         level_2_heading.click()
@@ -192,7 +223,6 @@ def municode_scraper(s3_bucket, s3_path, s3_table, base_loc, muni_tuple):
                   if "municipal" in link.text.lower() or "ordinance" in link.text.lower()])[0]
 
             x.find_elements_by_tag_name("a")[0].click()
-            div_page = True
             update_date = WebDriverWait(driver, 5) \
                 .until(EC.element_to_be_clickable((By.CLASS_NAME, "product-date"))).text
 
@@ -220,9 +250,6 @@ def municode_scraper(s3_bucket, s3_path, s3_table, base_loc, muni_tuple):
             driver.quit()
 
             return True
-        # create named files
-
-        # if page had division early on it two backs
 
         driver.quit()
 
