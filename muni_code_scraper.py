@@ -24,6 +24,14 @@ from utils_io import *
 
 
 class wait_for_text_to_start_with:
+
+    """
+    This class functions as a condition which can be used by the WebDriverWait method
+    It will cause the driver to wait until the text given to it is present in the element
+
+    It includes text replacement methods to modify the text string extracted from the element
+    """
+
     def __init__(self, locator, text_):
         self.locator = locator
         self.text = text_
@@ -42,6 +50,16 @@ class wait_for_text_to_start_with:
 
 
 def generate_municode_links():
+
+    """
+    Using the list of names below, this function will find the municode link corresponding to the page of each given muni
+
+    """
+
+
+
+
+
     city_county = 'Alameda County,Contra Costa County,Marin County,Napa County,City and County of San Francisco,San Mateo County,' \
                   'Santa Clara County,' \
                   'Solano County,Sonoma County,Alameda,Albany,Berkeley,Dublin,Emeryville,Fremont,Hayward,Livermore,Newark,Oakland,Piedmont,' \
@@ -63,7 +81,7 @@ def generate_municode_links():
     driver = webdriver.Chrome(f'{cwd}/chromedriver')
     driver.get('https://library.municode.com/ca')
 
-    element = WebDriverWait(driver, 20) \
+    element = WebDriverWait(driver, 30) \
         .until(EC.element_to_be_clickable((By.CSS_SELECTOR, "li[ng-repeat='client in letterGroup.clients']")))
 
     ca_links = driver.find_elements_by_tag_name("li")
@@ -77,17 +95,22 @@ def generate_municode_links():
 
 
 def extract_text(driver):
-    # this code will extract the text from a given page
+    """
+    Given a driver point at a page with "chunk" partitioned text, extract the text
+    """
 
     filler_text = "\nSHARE LINK TO SECTION\nPRINT SECTION\nDOWNLOAD (DOCX) OF SECTIONS\nEMAIL SECTION"
-    element = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div[ng-switch-when='CHUNKS']")))
+    element = WebDriverWait(driver, 120).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div[ng-switch-when='CHUNKS']")))
     doc = driver.find_element_by_css_selector('ul[class="chunks list-unstyled small-padding"]').text
     doc = doc.replace(filler_text, '')
     return doc
 
 
 def toc_crawler(driver):
-    # this code is run for situations where the level 2 is broken into further chunks that aren't visible on the landing page
+
+    """
+    this code is run for situations where the level 2  or further docs are broken into further chunks that aren't visible on the landing page
+    """
 
     two_toc = driver.find_elements_by_css_selector("li[depth='-1']")
     l_2_doc = []
@@ -102,9 +125,11 @@ def toc_crawler(driver):
             .replace(" New", '') \
             .replace(" new", '')
 
-        element = WebDriverWait(driver, 10).until(wait_for_text_to_start_with((By.CSS_SELECTOR, "div[class='chunk-title-wrapper']"), title))
+        element = WebDriverWait(driver, 120).until(wait_for_text_to_start_with((By.CSS_SELECTOR, "div[class='chunk-title-wrapper']"), title))
         if not element:
             return True
+
+        # if the level 3 doc is visible from the toc link, extract text, else begin another table of content crawl
 
         if driver.find_elements_by_css_selector("div[ng-switch-when='CHUNKS']"):
             l_2_doc.append(extract_text(driver))
@@ -116,16 +141,17 @@ def toc_crawler(driver):
                 level_4_heading.click()
 
                 title = level_4_heading.text.split("\n")[0].replace(" modified", '')\
-                                                           .replace(" modified", '')\
                                                            .replace(" Modified", '')\
                                                            .replace(" Amended", '')\
                                                            .replace(" amended", '')\
                                                            .replace(" New", '')\
                                                            .replace(" new", '')
 
-                element = WebDriverWait(driver, 10).until(wait_for_text_to_start_with((By.CSS_SELECTOR, "div[class='chunk-title-wrapper']"), title))
+                element = WebDriverWait(driver, 120).until(wait_for_text_to_start_with((By.CSS_SELECTOR, "div[class='chunk-title-wrapper']"), title))
                 if not element:
                     return True
+
+                # if the level 4 doc is visible from the toc link, extract text, else begin another table of content crawl
 
                 if driver.find_elements_by_css_selector("div[ng-switch-when='CHUNKS']"):
                     level_3_doc.append(extract_text(driver))
@@ -142,7 +168,7 @@ def toc_crawler(driver):
                                                                         .replace(" New", '') \
                                                                         .replace(" new", '')
 
-                        element = WebDriverWait(driver, 10).until(
+                        element = WebDriverWait(driver, 120).until(
                             wait_for_text_to_start_with((By.CSS_SELECTOR, "div[class='chunk-title-wrapper']"), title))
                         if not element:
                             return True
@@ -157,7 +183,7 @@ def page_crawler(driver, s3_bucket, s3_path, s3_table, base_loc, muni, update_da
     # this is the code which runs after the driver reaches the muni landing
     # it will call extraction and toc crawler as needed
 
-    element = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "section[id='toc']")))
+    element = WebDriverWait(driver, 120).until(EC.presence_of_element_located((By.CSS_SELECTOR, "section[id='toc']")))
     toc = [link for link in driver.find_element_by_css_selector("section[id='toc']").find_elements_by_tag_name("li")]
     for level_2_heading in toc:
 
@@ -175,7 +201,7 @@ def page_crawler(driver, s3_bucket, s3_path, s3_table, base_loc, muni, update_da
         print(title)
         level_2_heading.click()
 
-        element = WebDriverWait(driver, 10).until(wait_for_text_to_start_with((By.CSS_SELECTOR, "div[class='chunk-title-wrapper']"), title))
+        element = WebDriverWait(driver, 120).until(wait_for_text_to_start_with((By.CSS_SELECTOR, "div[class='chunk-title-wrapper']"), title))
         if not element:
             return True
 
@@ -200,7 +226,9 @@ def municode_scraper(s3_bucket, s3_path, s3_table, base_loc, muni_tuple):
     cwd = os.getcwd()
     driver = webdriver.Chrome(f'{cwd}/chromedriver')
     driver.get(muni_tuple[1])
-
+    element = WebDriverWait(driver, 120) \
+                .until(EC.element_to_be_clickable((By.CSS_SELECTOR, "i[class='fa fa-home']")))
+    print(1)
     try:
 
         sleep(1)
@@ -223,7 +251,7 @@ def municode_scraper(s3_bucket, s3_path, s3_table, base_loc, muni_tuple):
                   if "municipal" in link.text.lower() or "ordinance" in link.text.lower()])[0]
 
             x.find_elements_by_tag_name("a")[0].click()
-            update_date = WebDriverWait(driver, 5) \
+            update_date = WebDriverWait(driver, 10) \
                 .until(EC.element_to_be_clickable((By.CLASS_NAME, "product-date"))).text
 
         # format update date
@@ -237,7 +265,7 @@ def municode_scraper(s3_bucket, s3_path, s3_table, base_loc, muni_tuple):
         # check for popup-window
 
         try:
-            popup_button = WebDriverWait(driver, 10) \
+            popup_button = WebDriverWait(driver, 20) \
                 .until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button[class='hopscotch-bubble-close hopscotch-close']")))
 
             popup_button.click()
