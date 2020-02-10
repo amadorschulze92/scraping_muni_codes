@@ -8,10 +8,12 @@ from utils_io import *
 
 
 def extract_date(messy_text):
-    if re.search(r'passed\s(.+?)\.', messy_text):
-        match = re.search(r'passed\s(.+?)\.', messy_text)
+    messy_text = "\n".join(messy_text)
+    if re.search(r'passed\s.+?([A-Z].+?\d\d)\.', messy_text):
+        match = re.search(r'passed\s.+?([A-Z].+?\d\d)\.', messy_text)
         match_date = datetime.strptime(match.group(1), '%B %d, %Y').date()
     elif re.search(r'the\s(.+?)\scode\ssupplement\.', messy_text):
+        print("2")
         match = re.search(r'the\s(.+?)\scode\ssupplement\.', messy_text)
         try:
             match_date = datetime.strptime(match.group(1), '%Y-%m').date()
@@ -24,18 +26,7 @@ def extract_date(messy_text):
 
 
 def make_path(base_loc, city, messy_text):
-    if re.search(r'passed\s(.+?)\.', messy_text):
-        match = re.search(r'passed\s(.+?)\.', messy_text)
-        match_date = datetime.strptime(match.group(1), '%B %d, %Y').date()
-    elif re.search(r'the\s(.+?)\scode\ssupplement\.', messy_text):
-        match = re.search(r'the\s(.+?)\scode\ssupplement\.', messy_text)
-        try:
-            match_date = datetime.strptime(match.group(1), '%Y-%m').date()
-        except:
-            match_date = datetime.strptime(match.group(1), '%B %Y').date()
-    else:
-        print("could not match date")
-    num_date = match_date.strftime('%m-%d-%y')
+    num_date = extract_date(messy_text)
     path = f"{base_loc}/{city}/{num_date}"
     try:
         print(path)
