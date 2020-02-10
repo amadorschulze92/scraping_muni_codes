@@ -35,7 +35,7 @@ def rerun(my_funct, s3_bucket, s3_path, s3_table, base_loc, muni_tuple):
 
 def main():
     cwd = os.getcwd()
-    sys.path.insert(0,cwd + "/" + "chromedriver")
+    sys.path.insert(0, cwd + "/" + "chromedriver")
 
     og_df = pd.read_csv("my_links.csv", converters={'links': eval})
     og_df = og_df.drop("Unnamed: 0", axis=1)
