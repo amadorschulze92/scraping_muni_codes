@@ -73,7 +73,7 @@ def save_doc(driver):
     driver.switch_to.window(window_after)
     # wait for page to load
     element = WebDriverWait(driver, 180).until(EC.presence_of_element_located((By.ID, "saveAsSubmit")))
-    time.sleep(4)
+    time.sleep(3)
     #change doc type
     dropdown = driver.find_element_by_xpath("//option[@name='TEXT']")
     dropdown.click()
@@ -102,10 +102,10 @@ def get_update_date(driver):
     return my_date
 
 
-def downloads_done(base_loc, city, iterations):
+def downloads_done(path, iterations):
     for i in range(iterations):
-        if os.path.isfile(base_loc+'/'+city+'.txt'):
-            return base_loc+'/'+city+'.txt'
+        if os.path.isfile(path):
+            return path
         else:
             time.sleep(5)
     print("failed")
@@ -118,7 +118,9 @@ def code_pub_main(s3_bucket, s3_path, s3_table, base_loc, start_link):
     # configure multiple file download and turn off prompt
     prefs = {'download.default_directory': base_loc,
              'profile.default_content_setting_values.automatic_downloads': 1,
-             'download.prompt_for_download': 'False'}
+             'download.prompt_for_download': 'false',
+             'default_content_settings.automatic_downloads': 1,
+             'profile.content_settings.exceptions.automatic_downloads': 1}
     chrome_options.add_experimental_option('prefs', prefs)
     failed_cities = []
     city = start_link[0]
@@ -126,32 +128,30 @@ def code_pub_main(s3_bucket, s3_path, s3_table, base_loc, start_link):
     print(city)
     for link in links:
         try:
-            driver = webdriver.Chrome(f'{cwd}/chromedriver', options=chrome_options)
+            driver = webdriver.Chrome(f'{cwd}/chromedriver', chrome_options=chrome_options)
             print(link)
             driver.get(link)
             # find update date
-            update_date = get_update_date(driver)
+            messy_date = get_update_date(driver)
             # find and click all necessary checkboxes
             driver = handle_checkboxes(driver, 0.4, 0.5)
             # save the document
             driver = save_doc(driver)
-            # waits for files to download
-            city = city.replace(" ", "")
-            path = downloads_done(base_loc, city, 36)
-            print(path)
-            with open(f"{path}", "r") as f:
+            update_date = extract_date(messy_date)
+            # puts file in right folder and waits for files to download
+            old_path = base_loc+city+".txt"
+            new_path = downloads_done(old_path, 36)
+            #path = scraper_tools.make_path(base_loc, city, update_date)
+            path = make_path(base_loc, city, update_date)
+            new_path = path+city+".txt"
+            os.rename(old_path, new_path)
+
+            with open(f"{new_path}", "r") as f:
                 text_file = f.read()
-            text_file = text_file.replace("Title ", "--lvl2section--Title ")
-            split_section = text_file.split("--lvl2section--")
-            for lvl2_text in split_section:
-                lvl2_header = lvl2_text.split("\n")[1]
-                print(lvl2_header)
-                scraper_tools.s3_file_writer(s3_bucket, s3_path, s3_table, base_loc, city, update_date, lvl2_header, lvl2_text)
-            # new_path = scraper_tools.make_path(base_loc+'results', city, my_date[0])
-            # print(base_loc+'/test_folder/results')
-            # print(new_path+"/"+city+".rtf")
-            # os.rename(base_loc+'/test_folder/results'+'/'+city+".rtf", new_path+"/"+city+".rtf")
-            # print(new_path+"/"+city+".rtf")
+            lines = text_file.strip().split("\n")
+            for l in lines[:3]:
+                print(l)
+    #             scraper_tools.s3_file_writer(s3_bucket, s3_path, s3_table, base_loc, city, update_date, lvl2_header, lvl2_text)
             driver.close()
             driver.quit()
             return False
