@@ -36,11 +36,15 @@ def make_path(base_loc, city, num_date):
     return path
 
 
-def s3_status_check(S3_bucket, S3_path):
+def redshift_status_check(S3_bucket, S3_path):
     return True
 
 
 def check_for_s3_delta(muni, title, text, s3_table):
+    return True
+
+
+def get_most_recent(muni, s3_table):
     return True
 
 

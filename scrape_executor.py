@@ -50,7 +50,7 @@ def main():
     base_loc = '/Users/kjafshar/dev/test_folder/'
     s3_bucket = 'mtc-redshift-upload'
     s3_path = "test_kjafshar/"
-    s3_table = s3_status_check(s3_bucket, s3_path)
+    s3_table = redshift_status_check(s3_bucket, s3_path)
 
     missed_municipal = []
     sleep(2)

@@ -127,6 +127,7 @@ def toc_crawler(driver):
 
         element = WebDriverWait(driver, 120).until(wait_for_text_to_start_with((By.CSS_SELECTOR, "div[class='chunk-title-wrapper']"), title))
         if not element:
+            print(3)
             return True
 
         # if the level 3 doc is visible from the toc link, extract text, else begin another table of content crawl
@@ -149,6 +150,7 @@ def toc_crawler(driver):
 
                 element = WebDriverWait(driver, 120).until(wait_for_text_to_start_with((By.CSS_SELECTOR, "div[class='chunk-title-wrapper']"), title))
                 if not element:
+                    print(4)
                     return True
 
                 # if the level 4 doc is visible from the toc link, extract text, else begin another table of content crawl
@@ -171,6 +173,7 @@ def toc_crawler(driver):
                         element = WebDriverWait(driver, 120).until(
                             wait_for_text_to_start_with((By.CSS_SELECTOR, "div[class='chunk-title-wrapper']"), title))
                         if not element:
+                            print(5)
                             return True
                         level_4_doc.append(extract_text(driver))
                 level_3_doc.append(extract_text(driver))
@@ -203,6 +206,7 @@ def page_crawler(driver, s3_bucket, s3_path, s3_table, base_loc, muni, update_da
 
         element = WebDriverWait(driver, 120).until(wait_for_text_to_start_with((By.CSS_SELECTOR, "div[class='chunk-title-wrapper']"), title))
         if not element:
+            print(2)
             return True
 
         if driver.find_elements_by_css_selector("div[ng-switch-when='CHUNKS']"):
@@ -228,7 +232,7 @@ def municode_scraper(s3_bucket, s3_path, s3_table, base_loc, muni_tuple):
     driver.get(muni_tuple[1])
     element = WebDriverWait(driver, 120) \
                 .until(EC.element_to_be_clickable((By.CSS_SELECTOR, "i[class='fa fa-home']")))
-    print(1)
+
     try:
 
         sleep(1)
@@ -276,7 +280,7 @@ def municode_scraper(s3_bucket, s3_path, s3_table, base_loc, muni_tuple):
 
         if failed_crawl:
             driver.quit()
-
+            print(1)
             return True
 
         driver.quit()
