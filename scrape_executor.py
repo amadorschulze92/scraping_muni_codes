@@ -50,13 +50,13 @@ def main():
     base_loc = '/Users/kjafshar/dev/test_folder/'
     s3_bucket = 'mtc-redshift-upload'
     s3_path = "test_kjafshar/"
-    s3_table = redshift_status_check(s3_bucket, s3_path)
+    rs_table = redshift_status_check(s3_bucket, s3_path)
 
     missed_municipal = []
     sleep(2)
     for m in tuples_muni:
         print("-"*5)
-        missed_municode = rerun(muni_code_scraper.municode_scraper, s3_bucket, s3_path, s3_table, base_loc, m)
+        missed_municode = rerun(muni_code_scraper.municode_scraper, s3_bucket, s3_path, rs_table, base_loc, m)
         if missed_municode:
             missed_municipal.append(missed_municode)
     if not missed_municipal:
@@ -64,7 +64,7 @@ def main():
 
     for city, link in zip(df_codepub["city"], df_codepub["links"]):
         print("-"*5)
-        missed_codepub = rerun(codepub_scraper.code_pub_main, s3_bucket, s3_path, s3_table, base_loc, [city, link])
+        missed_codepub = rerun(codepub_scraper.code_pub_main, s3_bucket, s3_path, rs_table, base_loc, [city, link])
         if missed_codepub:
             missed_municipal.append(missed_codepub)
         else:
@@ -72,7 +72,7 @@ def main():
 
     for city, link in zip(df_qcode["city"], df_qcode["links"]):
         print("-"*5)
-        missed_qcode = rerun(qcode_scraper.q_code_main, s3_bucket, s3_path, s3_table, base_loc, [city, link])
+        missed_qcode = rerun(qcode_scraper.q_code_main, s3_bucket, s3_path, rs_table, base_loc, [city, link])
         if missed_qcode:
             missed_municipal.append(missed_qcode)
         else:

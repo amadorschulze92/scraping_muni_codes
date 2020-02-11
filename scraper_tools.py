@@ -40,15 +40,15 @@ def redshift_status_check(S3_bucket, S3_path):
     return True
 
 
-def check_for_s3_delta(muni, title, text, s3_table):
+def check_for_s3_delta(muni, title, text, rs_table):
     return True
 
 
-def get_most_recent(muni, s3_table):
+def get_most_recent(muni, rs_table):
     return True
 
 
-def s3_file_writer(s3_bucket, s3_path, s3_table, base_loc, muni, update_date, title, text):
+def s3_file_writer(s3_bucket, s3_path, base_loc, muni, update_date, title, text):
     """
     This function will combine downloaded docs into a single txt
 
@@ -70,20 +70,19 @@ def s3_file_writer(s3_bucket, s3_path, s3_table, base_loc, muni, update_date, ti
 
     filename = base_loc + title + '.txt'
 
-    if check_for_s3_delta(muni, title, text, s3_table):
-        with open(filename, 'w') as f:
-            f.write(text)
+    with open(filename, 'w') as f:
+        f.write(text)
 
-        try:
-            copy_file_to_s3(filename, s3_bucket, s3_key)
-            os.remove(filename)
-            print('file write complete')
-            print('')
-        # write to s3
-        except:
-            print(f'file issue for {filename}')
-            print('')
-            os.remove(filename)
+    try:
+        copy_file_to_s3(filename, s3_bucket, s3_key)
+        os.remove(filename)
+        print('file write complete')
+        print('')
+    # write to s3
+    except:
+        print(f'file issue for {filename}')
+        print('')
+        os.remove(filename)
 
     else:
         print("doc hasn't changed")

@@ -125,8 +125,9 @@ def toc_crawler(driver):
             .replace(" New", '') \
             .replace(" new", '')
 
-        element = WebDriverWait(driver, 120).until(wait_for_text_to_start_with((By.CSS_SELECTOR, "div[class='chunk-title-wrapper']"), title))
-        if not element:
+        try:
+            element = WebDriverWait(driver, 120).until(wait_for_text_to_start_with((By.CSS_SELECTOR, "div[class='chunk-title-wrapper']"), title))
+        except:
             print(3)
             return True
 
@@ -148,8 +149,9 @@ def toc_crawler(driver):
                                                            .replace(" New", '')\
                                                            .replace(" new", '')
 
-                element = WebDriverWait(driver, 120).until(wait_for_text_to_start_with((By.CSS_SELECTOR, "div[class='chunk-title-wrapper']"), title))
-                if not element:
+                try:
+                    element = WebDriverWait(driver, 120).until(wait_for_text_to_start_with((By.CSS_SELECTOR, "div[class='chunk-title-wrapper']"), title))
+                except:
                     print(4)
                     return True
 
@@ -170,9 +172,10 @@ def toc_crawler(driver):
                                                                         .replace(" New", '') \
                                                                         .replace(" new", '')
 
-                        element = WebDriverWait(driver, 120).until(
+                        try:
+                            element = WebDriverWait(driver, 120).until(
                             wait_for_text_to_start_with((By.CSS_SELECTOR, "div[class='chunk-title-wrapper']"), title))
-                        if not element:
+                        except:
                             print(5)
                             return True
                         level_4_doc.append(extract_text(driver))
@@ -182,7 +185,7 @@ def toc_crawler(driver):
     return "\n".join(l_2_doc)
 
 
-def page_crawler(driver, s3_bucket, s3_path, s3_table, base_loc, muni, update_date):
+def page_crawler(driver, s3_bucket, s3_path, rs_table, base_loc, muni, update_date):
     # this is the code which runs after the driver reaches the muni landing
     # it will call extraction and toc crawler as needed
 
@@ -203,17 +206,17 @@ def page_crawler(driver, s3_bucket, s3_path, s3_table, base_loc, muni, update_da
 
         print(title)
         level_2_heading.click()
-
-        element = WebDriverWait(driver, 120).until(wait_for_text_to_start_with((By.CSS_SELECTOR, "div[class='chunk-title-wrapper']"), title))
-        if not element:
+        try:
+            element = WebDriverWait(driver, 120).until(wait_for_text_to_start_with((By.CSS_SELECTOR, "div[class='chunk-title-wrapper']"), title))
+        except:
             print(2)
             return True
 
         if driver.find_elements_by_css_selector("div[ng-switch-when='CHUNKS']"):
-            s3_file_writer(s3_bucket, s3_path, s3_table, base_loc, muni, update_date, title, extract_text(driver))
+            s3_file_writer(s3_bucket, s3_path, base_loc, muni, update_date, title, extract_text(driver))
 
         elif driver.find_elements_by_css_selector("div[ng-switch-when='TOC']"):
-            s3_file_writer(s3_bucket, s3_path, s3_table, base_loc, muni, update_date, title, toc_crawler(driver))
+            s3_file_writer(s3_bucket, s3_path, base_loc, muni, update_date, title, toc_crawler(driver))
 
         else:
             print(f'{muni}-{title} failed')
@@ -226,7 +229,7 @@ def page_crawler(driver, s3_bucket, s3_path, s3_table, base_loc, muni, update_da
     return False
 
 
-def municode_scraper(s3_bucket, s3_path, s3_table, base_loc, muni_tuple):
+def municode_scraper(s3_bucket, s3_path, rs_table, base_loc, muni_tuple):
     cwd = os.getcwd()
     driver = webdriver.Chrome(f'{cwd}/chromedriver')
     driver.get(muni_tuple[1])
@@ -276,7 +279,7 @@ def municode_scraper(s3_bucket, s3_path, s3_table, base_loc, muni_tuple):
         except:
             pass
 
-        failed_crawl = page_crawler(driver, s3_bucket, s3_path, s3_table, base_loc, muni, update_date)
+        failed_crawl = page_crawler(driver, s3_bucket, s3_path, rs_table, base_loc, muni, update_date)
 
         if failed_crawl:
             driver.quit()
