@@ -36,17 +36,15 @@ def make_path(base_loc, city, num_date):
     return path
 
 
-def redshift_status_check(S3_bucket, S3_path):
-    return True
+def redshift_status_check(red_tbl,red_db):
+    
+    sql = f'SELECT * FROM {red_table}'
+    df = pull_large_df_from_redshift_sql(sql_statement, dbname=red_db)
+    df.drop(columns="row_number",inplace=True)
+    return df
 
 
-def s3_delta(muni, title, text, rs_table):
-    
-    # read in previous version using muni and title
-    # compute diff and store as delta
-    delta = None
-    
-    return delta
+
 
 
 def check_for_update(date, muni, rs_table):
@@ -61,6 +59,13 @@ def check_for_update(date, muni, rs_table):
     
     #return False
 
+def s3_delta(muni, title, text, rs_table):
+    
+    # read in previous version using muni and title
+    # compute diff and store as delta
+    delta = None
+    
+    return delta
 
 def s3_file_writer(s3_bucket, s3_path, base_loc, muni, update_date, title, text):
     """
