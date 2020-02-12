@@ -63,6 +63,7 @@ def check_for_update(date, muni, rs_table):
     else:
         return True
 
+
 def s3_delta(muni, title, text, rs_table):
 
     # read in previous version using muni and title
