@@ -44,8 +44,17 @@ def check_for_s3_delta(muni, title, text, rs_table):
     return True
 
 
-def get_most_recent(muni, rs_table):
+def check_for_update(muni, rs_table):
+    
+    # if muni has has new date
+    
+    # if no date
+    
     return True
+
+    # else
+    
+    #return False
 
 
 def s3_file_writer(s3_bucket, s3_path, base_loc, muni, update_date, title, text):
@@ -76,17 +85,17 @@ def s3_file_writer(s3_bucket, s3_path, base_loc, muni, update_date, title, text)
     try:
         copy_file_to_s3(filename, s3_bucket, s3_key)
         os.remove(filename)
+        
         print('file write complete')
         print('')
+        return 
     # write to s3
     except:
         print(f'file issue for {filename}')
         print('')
         os.remove(filename)
-
-    else:
-        print("doc hasn't changed")
-        print('')
+    
+    return 
 
     # remove any docs left in download folder
 
