@@ -44,6 +44,7 @@ def s3_delta(muni, title, text, rs_table):
     
     # read in previous version using muni and title
     # compute diff and store as delta
+    delta = None
     
     return delta
 
