@@ -269,7 +269,7 @@ def municode_scraper(s3_bucket, s3_path, rs_table, base_loc, muni_tuple):
 
         update_date = update_date.strftime('%m-%d-%y')
         
-        if not check_for_update(date, muni, rs_table):
+        if not check_for_update(update_date, muni, rs_table):
             print(f'{muni} not updated')
             return False
 
