@@ -40,11 +40,15 @@ def redshift_status_check(S3_bucket, S3_path):
     return True
 
 
-def check_for_s3_delta(muni, title, text, rs_table):
-    return True
+def s3_delta(muni, title, text, rs_table):
+    
+    # read in previous version using muni and title
+    # compute diff and store as delta
+    
+    return delta
 
 
-def check_for_update(muni, rs_table):
+def check_for_update(date, muni, rs_table):
     
     # if muni has has new date
     
