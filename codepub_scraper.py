@@ -73,11 +73,11 @@ def save_doc(driver):
     driver.switch_to.window(window_after)
     # wait for page to load
     element = WebDriverWait(driver, 180).until(EC.presence_of_element_located((By.ID, "saveAsSubmit")))
-    time.sleep(3)
+    time.sleep(1)
     #change doc type
     dropdown = driver.find_element_by_xpath("//option[@name='TEXT']")
     dropdown.click()
-    time.sleep(1)
+    time.sleep(2)
     # click the submit button
     submit_btn = driver.find_element_by_id("saveAsSubmit")
     submit_btn.click()
@@ -111,6 +111,22 @@ def downloads_done(path, iterations):
     print("failed")
 
 
+def split_lvl2_docs(new_path):
+    with open(f"{new_path}", "r") as f:
+        text_file = f.read()
+    lines = text_file.strip().split("\n")
+    lvl2_docs = {}
+    lvl2_start = 0
+    lvl2_end = 0
+    for line_num, li in enumerate(lines):
+        if re.search('Title\s\d+\s[A-Z\s\(\)]{4,}', li):
+            lvl2_end = line_num
+            lvl2_docs[lines[lvl2_start]] = '\n'.join(lines[lvl2_start:lvl2_end])
+            lvl2_start = line_num
+    lvl2_docs[lines[lvl2_start]] = '\n'.join(lines[lvl2_start:])
+    return lvl2_docs
+
+
 def code_pub_main(s3_bucket, s3_path, s3_table, base_loc, start_link):
     cwd = os.getcwd()
     chrome_options = webdriver.ChromeOptions()
@@ -137,21 +153,20 @@ def code_pub_main(s3_bucket, s3_path, s3_table, base_loc, start_link):
             driver = handle_checkboxes(driver, 0.4, 0.5)
             # save the document
             driver = save_doc(driver)
+            print("getting date...")
             update_date = extract_date(messy_date)
             # puts file in right folder and waits for files to download
+            print("file location...")
             old_path = base_loc+city+".txt"
             new_path = downloads_done(old_path, 36)
-            #path = scraper_tools.make_path(base_loc, city, update_date)
-            path = make_path(base_loc, city, update_date)
+            path = scraper_tools.make_path(base_loc, city, update_date)
             new_path = path+city+".txt"
             os.rename(old_path, new_path)
-
-            with open(f"{new_path}", "r") as f:
-                text_file = f.read()
-            lines = text_file.strip().split("\n")
-            for l in lines[:3]:
-                print(l)
-    #             scraper_tools.s3_file_writer(s3_bucket, s3_path, s3_table, base_loc, city, update_date, lvl2_header, lvl2_text)
+            # split into lvl2 docs and send each one to s3
+            print("splitting...")
+            lvl2_docs = split_lvl2_docs(new_path)
+            for lvl2_header, lvl2_text in lvl2_docs.items():
+                scraper_tools.s3_file_writer(s3_bucket, s3_path, s3_table, base_loc, city, update_date, lvl2_header, lvl2_text)
             driver.close()
             driver.quit()
             return False
