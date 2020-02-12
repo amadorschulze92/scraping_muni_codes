@@ -43,21 +43,23 @@ def redshift_status_check(red_tbl,red_db):
     df.drop(columns="row_number",inplace=True)
     return df
 
-
-
-
-
 def check_for_update(date, muni, rs_table):
     
-    # if muni has has new date
-    
-    # if no date
-    
-    return True
+    muni_dates = rs_table.loc[rs_table.muni == muni].date.sort_values(ascending=False)
 
-    # else
-    
-    #return False
+    if len(muni_dates) > 0:
+
+        most_recent = muni_dates[0]
+
+        if date > most_recent:
+
+            return True
+
+        else:
+            return False
+
+    else:
+        return True
 
 def s3_delta(muni, title, text, rs_table):
     
