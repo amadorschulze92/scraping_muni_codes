@@ -72,16 +72,14 @@ def s3_delta(muni, title, text, rs_table):
 
     return delta
 
+
 def s3_file_writer(s3_bucket, s3_path, base_loc, muni, update_date, title, text):
     """
     This function will combine downloaded docs into a single txt
 
     :param base_loc: path to download folder
-    :param output_dir: path to output directory
-    :param i: given index of doc
     :param muni: municipality name
     :param update_date: data municode updated
-    :param names: list of article names for given muni
     :return: nothing
     """
 
