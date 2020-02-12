@@ -25,7 +25,7 @@ def extract_date(messy_text):
 
 
 def make_path(base_loc, city, num_date):
-    path = f"{base_loc}/{city}/{num_date}"
+    path = f"{base_loc}{city}/{num_date}/"
     try:
         print(path)
         os.makedirs(path, exist_ok=True)
