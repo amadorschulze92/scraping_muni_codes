@@ -38,10 +38,11 @@ def make_path(base_loc, city, num_date):
 
 def redshift_status_check(red_tbl,red_db):
     
-    sql = f'SELECT * FROM {red_tbl}'
+    sql_statement = f'SELECT * FROM {red_tbl}'
     df = pull_large_df_from_redshift_sql(sql_statement, dbname=red_db)
     df.drop(columns="row_number",inplace=True)
     return df
+
 
 def check_for_update(date, muni, rs_table):
     
