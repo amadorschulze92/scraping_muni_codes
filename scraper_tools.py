@@ -2,6 +2,7 @@ import re
 from datetime import datetime
 import os
 import sys
+from selenium.webdriver.support.ui import WebDriverWait
 
 sys.path.insert(0, "../Utility Code/")
 from utils_io import *
@@ -37,7 +38,7 @@ def make_path(base_loc, city, num_date):
 
 
 def redshift_status_check(red_tbl,red_db):
-    
+
     sql_statement = f'SELECT * FROM {red_tbl}'
     df = pull_large_df_from_redshift_sql(sql_statement, dbname=red_db)
     df.drop(columns="row_number",inplace=True)
@@ -45,7 +46,7 @@ def redshift_status_check(red_tbl,red_db):
 
 
 def check_for_update(date, muni, rs_table):
-    
+
     muni_dates = rs_table.loc[rs_table.muni == muni].date.sort_values(ascending=False)
 
     if len(muni_dates) > 0:
@@ -63,11 +64,11 @@ def check_for_update(date, muni, rs_table):
         return True
 
 def s3_delta(muni, title, text, rs_table):
-    
+
     # read in previous version using muni and title
     # compute diff and store as delta
     delta = None
-    
+
     return delta
 
 def s3_file_writer(s3_bucket, s3_path, base_loc, muni, update_date, title, text):
@@ -98,17 +99,17 @@ def s3_file_writer(s3_bucket, s3_path, base_loc, muni, update_date, title, text)
     try:
         copy_file_to_s3(filename, s3_bucket, s3_key)
         os.remove(filename)
-        
+
         print('file write complete')
         print('')
-        return 
+        return
     # write to s3
     except:
         print(f'file issue for {filename}')
         print('')
         os.remove(filename)
-    
-    return 
+
+    return
 
     # remove any docs left in download folder
 
