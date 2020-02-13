@@ -10,8 +10,8 @@ from utils_io import *
 
 def extract_date(messy_text):
     messy_text = "\n".join(messy_text)
-    if re.search('passed\s.+?([A-Z].+?\d\d)\.', messy_text):
-        match = re.search(r'passed\s.+?([A-Z].+?\d\d)\.', messy_text)
+    if re.search('passed\s.*([A-Z].+?\d+)\.', messy_text):
+        match = re.search(r'passed\s.*([A-Z].+?\d+)\.', messy_text)
         match_date = datetime.strptime(match.group(1), '%B %d, %Y').date()
     elif re.search(r'the\s(.+?)\scode\ssupplement\.', messy_text):
         match = re.search(r'the\s(.+?)\scode\ssupplement\.', messy_text)

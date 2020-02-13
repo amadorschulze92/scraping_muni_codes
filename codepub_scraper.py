@@ -119,7 +119,7 @@ def split_lvl2_docs(new_path):
     lvl2_start = 0
     lvl2_end = 0
     for line_num, li in enumerate(lines):
-        if re.search('Title\s\d+\s[A-Z\s\(\)]{4,}', li):
+        if re.search('[TtIiLlEe]{5,}+\s\d+\s[A-Z\s\(\)]{4,}', li):
             lvl2_end = line_num
             lvl2_docs[lines[lvl2_start]] = '\n'.join(lines[lvl2_start:lvl2_end])
             lvl2_start = line_num
@@ -127,7 +127,7 @@ def split_lvl2_docs(new_path):
     return lvl2_docs
 
 
-def code_pub_main(s3_bucket, s3_path, s3_table, base_loc, start_link):
+def code_pub_main(s3_bucket, s3_path, rs_table, base_loc, start_link):
     cwd = os.getcwd()
     chrome_options = webdriver.ChromeOptions()
     # set download folder
@@ -153,22 +153,19 @@ def code_pub_main(s3_bucket, s3_path, s3_table, base_loc, start_link):
             driver = handle_checkboxes(driver, 0.4, 0.5)
             # save the document
             driver = save_doc(driver)
-            print("getting date...")
-            update_date = extract_date(messy_date)
+            update_date = scraper_tools.extract_date(messy_date)
             # puts file in right folder and waits for files to download
-            print("file location...")
             old_path = base_loc+city+".txt"
             new_path = downloads_done(old_path, 36)
+            #path = scraper_tools.make_path(base_loc, city, update_date)
             path = scraper_tools.make_path(base_loc, city, update_date)
             new_path = path+city+".txt"
             os.rename(old_path, new_path)
-            # split into lvl2 docs and send each one to s3
-            print("splitting...")
             lvl2_docs = split_lvl2_docs(new_path)
             for lvl2_header, lvl2_text in lvl2_docs.items():
-                scraper_tools.s3_file_writer(s3_bucket, s3_path, s3_table, base_loc, city, update_date, lvl2_header, lvl2_text)
+                scraper_tools.s3_file_writer(s3_bucket, s3_path, base_loc, city, update_date, lvl2_header, lvl2_text)
             driver.close()
             driver.quit()
-            return False
+            return (False)
         except:
-            return True
+            return (True)
