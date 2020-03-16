@@ -39,6 +39,9 @@ def make_path(base_loc, city, num_date):
 
 def redshift_status_check(red_tbl,red_db):
 
+    # this function creates a pd df from the current redshift table of muni docs
+    # this df is used to check the status decide how to treat crawled docs
+
     sql_statement = f'SELECT * FROM {red_tbl}'
     df = pull_large_df_from_redshift_sql(sql_statement, dbname=red_db)
     df.drop(columns="row_number",inplace=True)
@@ -46,6 +49,9 @@ def redshift_status_check(red_tbl,red_db):
 
 
 def check_for_update(date, muni, rs_table):
+
+    # this function will check the status df to see if the given data is more recent than the
+    # most recent date in the table
 
     muni_dates = rs_table.loc[rs_table.muni == muni].date.sort_values(ascending=False)
 
@@ -58,6 +64,7 @@ def check_for_update(date, muni, rs_table):
             return True
 
         else:
+
             return False
 
     else:
