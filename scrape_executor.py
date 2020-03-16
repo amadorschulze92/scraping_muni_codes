@@ -17,20 +17,21 @@ def rerun(my_funct, s3_bucket, s3_path, s3_table, base_loc, muni_tuple):
     (city_name, link_to_munipal_code). If that scraper fails rerun will try
     to run the scraper again."""
     start = time.time()
-    miss = my_funct(s3_bucket, s3_path, s3_table, base_loc, muni_tuple)
+    miss, keys_written = my_funct(s3_bucket, s3_path, s3_table, base_loc, muni_tuple)
     sleep(2)
 
     if miss:
         print(f'{muni_tuple[0]} has failed, rerunning')
-        final = my_funct(s3_bucket, s3_path, s3_table, base_loc, muni_tuple)
+        final, keys_written = my_funct(s3_bucket, s3_path, s3_table, base_loc, muni_tuple)
         if final:
             print(f'{muni_tuple[0]} has failed again')
-            return f'{muni_tuple[0]}: {muni_tuple[1]}'
+            return f'{muni_tuple[0]}: {muni_tuple[1]}', []
         else:
             print('written successfully after second run')
     else:
 
         print(f"{muni_tuple[0]} completed in {time.time() - start} seconds")
+        return '', keys_written
 
 
 def main():
@@ -55,17 +56,19 @@ def main():
     tbl = "muni_scraping"
     red_table = red_sch + "." + tbl
     red_db = "staging"
-    
-    
+
     rs_table = redshift_status_check(red_table,red_db)
 
     missed_municipal = []
     sleep(2)
+    keys_written_municode = []
     for m in tuples_muni:
         print("-"*5)
-        missed_municode = rerun(muni_code_scraper.municode_scraper, s3_bucket, s3_path, rs_table, base_loc, m)
+        missed_municode, keys_written = rerun(muni_code_scraper.municode_scraper, s3_bucket, s3_path, rs_table, base_loc, m)
         if missed_municode:
             missed_municipal.append(missed_municode)
+        else:
+            keys_written_municode += keys_written
     if not missed_municipal:
         print("municode links successfully crawled")
 

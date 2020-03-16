@@ -3,8 +3,14 @@ from datetime import datetime
 import os
 import sys
 from selenium.webdriver.support.ui import WebDriverWait
+import time
+import getpass
 
-sys.path.insert(0, "../Utility Code/")
+user = getpass.getuser()
+sys.dont_write_bytecode = True
+
+sys.path.insert(0, '/Users/{}/Box/Utility Code'.format(user))
+
 from utils_io import *
 
 
@@ -108,7 +114,7 @@ def s3_file_writer(s3_bucket, s3_path, base_loc, muni, update_date, title, text)
 
         print('file write complete')
         print('')
-        return
+        return s3_key
     # write to s3
     except:
         print(f'file issue for {filename}')

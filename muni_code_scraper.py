@@ -12,13 +12,7 @@ import getpass
 user = getpass.getuser()
 sys.dont_write_bytecode = True
 
-# Select one of the following paths:
-
-# for DataViz team members
-sys.path.insert(0, "../Utility Code/")
-
-# # for all other teams with access to the Utility Code folder
-# sys.path.insert(0, '/Users/{}/Box/Utility Code'.format(user))
+sys.path.insert(0, '/Users/{}/Box/Utility Code'.format(user))
 
 from utils_io import *
 
@@ -128,7 +122,6 @@ def toc_crawler(driver):
         try:
             element = WebDriverWait(driver, 120).until(wait_for_text_to_start_with((By.CSS_SELECTOR, "div[class='chunk-title-wrapper']"), title))
         except:
-            print(3)
             return True
 
         # if the level 3 doc is visible from the toc link, extract text, else begin another table of content crawl
@@ -152,7 +145,6 @@ def toc_crawler(driver):
                 try:
                     element = WebDriverWait(driver, 120).until(wait_for_text_to_start_with((By.CSS_SELECTOR, "div[class='chunk-title-wrapper']"), title))
                 except:
-                    print(4)
                     return True
 
                 # if the level 4 doc is visible from the toc link, extract text, else begin another table of content crawl
@@ -176,7 +168,6 @@ def toc_crawler(driver):
                             element = WebDriverWait(driver, 120).until(
                             wait_for_text_to_start_with((By.CSS_SELECTOR, "div[class='chunk-title-wrapper']"), title))
                         except:
-                            print(5)
                             return True
                         level_4_doc.append(extract_text(driver))
                 level_3_doc.append(extract_text(driver))
@@ -191,6 +182,7 @@ def page_crawler(driver, s3_bucket, s3_path, rs_table, base_loc, muni, update_da
 
     element = WebDriverWait(driver, 120).until(EC.presence_of_element_located((By.CSS_SELECTOR, "section[id='toc']")))
     toc = [link for link in driver.find_element_by_css_selector("section[id='toc']").find_elements_by_tag_name("li")]
+    keys_written = []
     for level_2_heading in toc:
 
         # this check and similar ones during the toc_crawler are to ensure the driver has reached the particular page
@@ -210,31 +202,36 @@ def page_crawler(driver, s3_bucket, s3_path, rs_table, base_loc, muni, update_da
             element = WebDriverWait(driver, 120).until(wait_for_text_to_start_with((By.CSS_SELECTOR, "div[class='chunk-title-wrapper']"), title))
         except:
             print(2)
-            return True
+            return True, keys_written
 
         if driver.find_elements_by_css_selector("div[ng-switch-when='CHUNKS']"):
-            s3_file_writer(s3_bucket, s3_path, base_loc, muni, update_date, title, extract_text(driver))
-
+            key = s3_file_writer(s3_bucket, s3_path, base_loc, muni, update_date, title, extract_text(driver))
+            if key:
+                keys_written.append(key)
         elif driver.find_elements_by_css_selector("div[ng-switch-when='TOC']"):
-            s3_file_writer(s3_bucket, s3_path, base_loc, muni, update_date, title, toc_crawler(driver))
-
+            key = s3_file_writer(s3_bucket, s3_path, base_loc, muni, update_date, title, toc_crawler(driver))
+            if key:
+                keys_written.append(key)
         else:
             print(f'{muni}-{title} failed')
-            return True
+            return True, keys_written
 
         close_button = driver.find_elements_by_css_selector('i[class="fa-fw fa fa-chevron-down"]')
         if close_button:
             close_button[0].click()
 
-    return False
+    return False, keys_written
 
 
 def municode_scraper(s3_bucket, s3_path, rs_table, base_loc, muni_tuple):
+
     cwd = os.getcwd()
     driver = webdriver.Chrome(f'{cwd}/chromedriver')
     driver.get(muni_tuple[1])
     element = WebDriverWait(driver, 120) \
                 .until(EC.element_to_be_clickable((By.CSS_SELECTOR, "i[class='fa fa-home']")))
+
+    keys_written = []
 
     try:
 
@@ -271,7 +268,7 @@ def municode_scraper(s3_bucket, s3_path, rs_table, base_loc, muni_tuple):
         
         if not check_for_update(update_date, muni, rs_table):
             print(f'{muni} not updated')
-            return False
+            return False, keys_written
 
         # check for popup-window
 
@@ -283,19 +280,19 @@ def municode_scraper(s3_bucket, s3_path, rs_table, base_loc, muni_tuple):
         except:
             pass
 
-        failed_crawl = page_crawler(driver, s3_bucket, s3_path, rs_table, base_loc, muni, update_date)
+        failed_crawl, keys_written = page_crawler(driver, s3_bucket, s3_path, rs_table, base_loc, muni, update_date)
 
         if failed_crawl:
             driver.quit()
             print(1)
-            return True
+            return True, keys_written
 
         driver.quit()
 
-        return False
+        return False, keys_written
 
     except:
 
         driver.quit()
 
-        return True
+        return True, keys_written
