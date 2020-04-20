@@ -1,0 +1,109 @@
+,city,links,link_type
+0,alameda,['http://library.municode.com/index.aspx?clientId=16753&stateId=5&stateName=California'],municode
+1,alameda county,"['http://www.municode.com/Resources/gateway.asp?pid=16186&sid=5', 'http://www.municode.com/Resources/gateway.asp?pid=16425&sid=5']",municode
+2,albany,['http://clerkshq.com/default.ashx?clientsite=albany-ca'],other
+3,american canyon,['http://qcode.us/codes/americancanyon/'],qcode
+4,antioch,['http://www.amlegal.com/antioch_ca/'],amlegal
+5,atherton,['http://www.codepublishing.com/CA/atherton.html'],codepub
+6,belmont,['http://www.municode.com/resources/gateway.asp?pid=10411&sid=5'],municode
+7,belvedere,['http://www.cityofbelvedere.org/index.aspx?NID=92'],other
+8,benicia,['http://www.codepublishing.com/ca/benicia/'],codepub
+9,berkeley,['https://www.codepublishing.com/CA/Berkeley/'],codepub
+10,brentwood,['http://qcode.us/codes/brentwood/'],qcode
+11,brisbane,['http://library.municode.com/index.aspx?clientId=16223&stateId=5&stateName=California'],municode
+12,burlingame,['http://qcode.us/codes/burlingame/'],qcode
+13,calistoga,['http://www.codepublishing.com/ca/calistoga/'],codepub
+14,campbell,['http://www.municode.com/Resources/gateway.asp?pid=16242&sid=5'],municode
+15,clayton,['http://www.ci.clayton.ca.us/municode/'],municode
+16,cloverdale,['http://www.codepublishing.com/CA/Cloverdale.html'],codepub
+17,colma,['http://www.colma.ca.gov/index.php?option=com_docman&task=cat_view&gid=68&Itemid=73'],other
+18,concord,['http://www.ci.concord.ca.us/citygov/municode/municodeindex.htm'],municode
+19,contra costa county,['http://www.municode.com/Resources/gateway.asp?pid=16286&sid=5'],municode
+20,cotati,['http://www.codepublishing.com/CA/Cotati/'],codepub
+21,cupertino,['http://www.amlegal.com/cupertino_ca/'],amlegal
+22,daly city,['http://library.municode.com/index.aspx?clientId=16311&stateId=5&stateName=California'],municode
+23,danville,['http://www.amlegal.com/danville_ca/'],amlegal
+24,dixon,['http://www.ci.dixon.ca.us/Archive.aspx?AMID=62'],other
+25,dublin,['http://www.codepublishing.com/ca/dublin.html'],codepub
+26,east palo alto,['http://www.municode.com/Resources/gateway.asp?pid=16328&sid=5'],municode
+27,el cerrito,['http://www.municode.com/Resources/gateway.asp?pid=16333&sid=5'],municode
+28,emeryville,['http://www.codepublishing.com/ca/emeryville/'],codepub
+29,fairfax,['http://www.amlegal.com/library/ca/fairfax.shtml'],amlegal
+30,fairfield,['http://www.codepublishing.com/ca/fairfield/'],codepub
+31,foster city,['http://www.codepublishing.com/CA/FosterCity/'],codepub
+32,fremont,['http://www.fremont.gov/index.aspx?NID=73'],other
+33,gilroy,['http://www.cityofgilroy.org/cityofgilroy/online_services/municipal_code/default.aspx'],other
+34,half moon bay,['http://www.codepublishing.com/CA/halfmoonbay/'],codepub
+35,hayward,['http://www.hayward-ca.gov/CITY-GOVERNMENT/DEPARTMENTS/CITY-CLERK/index.shtm?tab=3#oo'],other
+36,healdsburg,['http://www.ci.healdsburg.ca.us/index.aspx?page=196'],other
+37,hercules,['http://www.codepublishing.com/CA/hercules/'],codepub
+38,hillsborough,['http://library.municode.com/index.aspx?clientId=16404'],municode
+39,lafayette,['http://www.municode.com/Resources/gateway.asp?pid=16435&sid=5'],municode
+40,larkspur,['http://www.codepublishing.com/ca/larkspur.html'],codepub
+41,livermore,['http://www.codepublishing.com/CA/Livermore.html'],codepub
+42,los altos,['http://www.municode.com/Resources/gateway.asp?pid=16460&sid=5'],municode
+43,los altos hills,['http://qcode.us/codes/losaltoshills/'],qcode
+44,los gatos,['http://www.municode.com/resources/gateway.asp?pid=11760&sid=5'],municode
+45,marin county,['http://www.municode.com/Resources/gateway.asp?pid=16476&sid=5'],municode
+46,martinez,['http://www.municode.com/Resources/gateway.asp?pid=16716&sid=5'],municode
+47,menlo park,['http://www.codepublishing.com/CA/menlopark/'],codepub
+48,mill valley,['http://qcode.us/codes/millvalley/'],qcode
+49,millbrae,['http://www.codepublishing.com/ca/millbrae.html'],codepub
+50,milpitas,['http://www.municode.com/Resources/gateway.asp?pid=16491&sid=5'],municode
+51,monte sereno,['http://www.municode.com/Resources/gateway.asp?pid=16498&sid=5'],municode
+52,moraga,['http://www.municode.com/Resources/gateway.asp?pid=16501&sid=5'],municode
+53,morgan hill,['http://www.municode.com/Resources/gateway.asp?pid=16502&sid=5'],municode
+54,mountain view,['http://www.municode.com/Resources/gateway.asp?pid=16508&sid=5'],municode
+55,napa,['http://qcode.us/codes/napa/'],qcode
+56,napa county,['http://library.municode.com/index.aspx?clientId=16513&stateId=5&stateName=California'],municode
+57,newark,['http://www.municode.com/resources/gateway.asp?pid=16521&sid=5'],municode
+58,novato,['http://www.municode.com/Resources/gateway.asp?pid=16532&sid=5'],municode
+59,oakland,['http://www.municode.com/Resources/gateway.asp?pid=16308&sid=5'],municode
+60,oakley,['http://www.codepublishing.com/CA/Oakley/'],codepub
+61,orinda,['http://www.municode.com/Resources/gateway.asp?pid=16541&sid=5'],municode
+62,pacifica,['http://www.municode.com/Resources/gateway.asp?pid=16544&sid=5'],municode
+63,palo alto,['http://www.amlegal.com/library/ca/paloalto.shtml'],amlegal
+64,petaluma,['http://www.codepublishing.com/ca/petaluma.html'],codepub
+65,piedmont,['http://www.ci.piedmont.ca.us/citycode.shtml'],other
+66,pinole,['http://www.amlegal.com/pinole_ca/'],amlegal
+67,pittsburg,['http://www.codepublishing.com/ca/Pittsburg/'],codepub
+68,pleasant hill,['http://www.codepublishing.com/CA/PleasantHill/'],codepub
+69,pleasanton,['http://qcode.us/codes/pleasanton/'],qcode
+70,portola valley,['http://www.municode.com/resources/gateway.asp?pid=13781&sid=5'],municode
+71,redwood city,"['http://www.municode.com/Resources/gateway.asp?pid=16574&sid=5', 'http://www.redwoodcity.org/government/charter.html', 'http://www.municode.com/Resources/gateway.asp?pid=16091&sid=5']",municode
+72,richmond,['http://www.municode.com/Resources/gateway.asp?pid=16579&sid=5'],municode
+73,rio vista,['http://qcode.us/codes/riovista/'],qcode
+74,rohnert park,['http://www.municode.com/Resources/gateway.asp?pid=16586&sid=5'],municode
+75,ross,['http://www.townofross.org/pages/resource_center/municipal_code.html'],other
+76,san anselmo,['http://library.municode.com/index.aspx?clientId=16603&stateId=5&stateName=California'],municode
+77,san bruno,['http://qcode.us/codes/sanbruno/'],qcode
+78,san carlos,['http://www.codepublishing.com/CA/sancarlos/'],codepub
+79,san francisco,"['http://www.amlegal.com/nxt/gateway.dll?f=templates&fn=default.htm&vid=amlegal:sanfrancisco_ca', 'http://www.amlegal.com/nxt/gateway.dll/California/park/parkcode?f=templates$fn=default.htm$3.0$vid=amlegal:sanfrancisco_ca$sync=1', 'http://www.amlegal.com/nxt/gateway.dll?f=templates&fn=default.htm&vid=amlegal:sf_building', 'http://www.amlegal.com/nxt/gateway.dll/California/health/healthcode?f=templates$fn=default.htm$3.0$vid=amlegal:sanfrancisco_ca$sync=1']",amlegal
+80,san leandro,['http://qcode.us/codes/sanleandro/'],qcode
+81,san mateo,['http://www.cityofsanmateo.org/index.aspx?NID=164'],other
+82,san mateo county,['http://library.municode.com/index.aspx?clientId=16029'],municode
+83,san pablo,['http://www.codepublishing.com/ca/sanpablo/'],codepub
+84,san rafael,['http://www.municode.com/Resources/gateway.asp?pid=16610&sid=5'],municode
+85,san ramon,['http://library.municode.com/index.aspx?clientId=16611'],municode
+86,santa clara,['http://www.codepublishing.com/ca/santaclara/frameless/'],codepub
+87,santa clara county,['http://library.municode.com/index.aspx?clientId=13790'],municode
+88,santa rosa,['http://qcode.us/codes/santarosa/'],qcode
+89,saratoga,['http://www.municode.com/Resources/gateway.asp?pid=16616&sid=5'],municode
+90,sausalito,['http://www.ci.sausalito.ca.us/Index.aspx?page=121'],other
+91,sebastopol,['http://ci.sebastopol.ca.us/page/municipal-code-city-clerk'],other
+92,solano county,['http://www.solanocounty.com/hpl/county_code.asp'],other
+93,sonoma,['http://codepublishing.com/ca/sonoma/'],codepub
+94,sonoma county,['http://www.municode.com/Resources/gateway.asp?pid=16331&sid=5'],municode
+95,south san francisco,['http://qcode.us/codes/southsanfrancisco/'],qcode
+96,suisun city,['http://www.municode.com/Resources/gateway.asp?pid=16647&sid=5'],municode
+97,sunnyvale,['http://qcode.us/codes/sunnyvale/'],qcode
+98,tiburon,['http://library.municode.com/index.aspx?clientId=16657'],municode
+99,union city,['http://qcode.us/codes/unioncity/'],qcode
+100,vacaville,['http://www.codepublishing.com/ca/vacaville/'],codepub
+101,vallejo,['http://library.municode.com/index.aspx?clientID=16106&stateID=5&statename=California'],municode
+102,walnut creek,['http://www.codepublishing.com/ca/walnutcreek/'],codepub
+103,windsor,['http://www.municode.com/Resources/gateway.asp?pid=16702&sid=5'],municode
+104,woodside,['http://www.amlegal.com/woodside_ca/'],amlegal
+105,yountville,['http://qcode.us/codes/yountville/'],qcode
+106,san jose,['https://library.municode.com/ca/san_jose/codes/code_of_ordinances'],municode
+107,saint helena,['https://www.codepublishing.com/CA/StHelena/'],codepub
