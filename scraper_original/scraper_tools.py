@@ -121,7 +121,7 @@ def s3_file_writer(s3_bucket, s3_path, base_loc, muni, update_date, title, text)
         print('')
         os.remove(filename)
 
-    return
+    return s3_key
 
     # remove any docs left in download folder
 

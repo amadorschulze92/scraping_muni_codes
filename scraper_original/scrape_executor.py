@@ -53,7 +53,7 @@ def main():
     s3_path = "test_kjafshar/"
     
     red_sch = "test_kjafshar"
-    tbl = "muni_scraping"
+    tbl = "cache_muni_scraping"
     red_table = red_sch + "." + tbl
     red_db = "staging"
 
@@ -69,6 +69,7 @@ def main():
             missed_municipal.append(missed_municode)
         else:
             keys_written_municode += keys_written
+
     if not missed_municipal:
         print("municode links successfully crawled")
 
