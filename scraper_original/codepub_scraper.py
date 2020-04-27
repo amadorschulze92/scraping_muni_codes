@@ -141,7 +141,7 @@ def code_pub_main(s3_bucket, s3_path, rs_table, base_loc, start_link):
              'default_content_settings.automatic_downloads': 1,
              'profile.content_settings.exceptions.automatic_downloads': 1}
     chrome_options.add_experimental_option('prefs', prefs)
-    failed_cities = []
+    keys_written = []
     city = start_link[0]
     links = start_link[1]
     print(city)
@@ -166,9 +166,11 @@ def code_pub_main(s3_bucket, s3_path, rs_table, base_loc, start_link):
             os.rename(old_path, new_path)
             lvl2_docs = split_lvl2_docs(new_path)
             for lvl2_header, lvl2_text in lvl2_docs.items():
-                scraper_tools.s3_file_writer(s3_bucket, s3_path, base_loc, city, update_date, lvl2_header, lvl2_text)
+                key = scraper_tools.s3_file_writer(s3_bucket, s3_path, base_loc, city, update_date, lvl2_header, lvl2_text)
+                if key:
+                    keys_written.append(key)
             driver.close()
             driver.quit()
-            return (False)
+            return False, keys_written
         except:
-            return (True)
+            return True, keys_written

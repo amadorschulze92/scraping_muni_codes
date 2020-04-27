@@ -52,6 +52,7 @@ def q_code_main(s3_bucket, s3_path, rs_table, base_loc, start_link):
             'download.prompt_for_download': 'False'}
     chrome_options.add_experimental_option('prefs', prefs)
     missing_sections = 0
+    keys_written = []
     my_xpath = "//div[@class='navChildren']//a"
     showall_xpath = "//a[@class='showAll']"
     high_title_xpath = "//div[@class='currentTopic']"
@@ -109,14 +110,15 @@ def q_code_main(s3_bucket, s3_path, rs_table, base_loc, start_link):
                         scraper_tools.find_click_n_wait(driver, my_xpath, my_xpath, h_sec_num, 3, 0.1)
                 scraper_tools.find_click_n_wait(driver, up_xpath, my_xpath, 0, 3, 0.1)
                 update_date = scraper_tools.extract_date(update_date_messy)
-                scraper_tools.s3_file_writer(s3_bucket, s3_path, base_loc, city, update_date, level2_title, '\n'.join(my_doc))
-                # write_to_folder(base_loc, city, level2_title, my_doc, update_date_messy)
+                key = scraper_tools.s3_file_writer(s3_bucket, s3_path, base_loc, city, update_date, level2_title, '\n'.join(my_doc))
+                if key:
+                    keys_written.append(key)
                 my_doc = [city]
         except:
-            return True
+            return True, keys_written
     driver.close()
     driver.quit()
     print("-"*5)
     if missing_sections > 0:
-        return True
-    return False
+        return True, keys_written
+    return False, keys_written

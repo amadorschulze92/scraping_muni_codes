@@ -51,7 +51,7 @@ def main():
     base_loc = '/Users/kjafshar/dev/test_folder/'
     s3_bucket = 'mtc-redshift-upload'
     s3_path = "test_kjafshar/"
-    
+
     red_sch = "test_kjafshar"
     tbl = "cache_muni_scraping"
     red_table = red_sch + "." + tbl
@@ -73,21 +73,31 @@ def main():
     if not missed_municipal:
         print("municode links successfully crawled")
 
+    # get data from codepub
+    missed_len = len(missed_municipal)
+    keys_written_codepub = []
     for city, link in zip(df_codepub["city"], df_codepub["links"]):
         print("-"*5)
-        missed_codepub = rerun(codepub_scraper.code_pub_main, s3_bucket, s3_path, rs_table, base_loc, [city, link])
+        missed_codepub, keys_written = rerun(codepub_scraper.code_pub_main, s3_bucket, s3_path, rs_table, base_loc, [city, link])
         if missed_codepub:
             missed_municipal.append(missed_codepub)
         else:
-            print("code publishing links successfully crawled")
+            keys_written_codepub += keys_written
+    if missed_len == len(missed_municipal):
+        print("code publishing links successfully crawled")
 
+    # get data from qcode
+    missed_len = len(missed_municipal)
+    keys_written_qcode = []
     for city, link in zip(df_qcode["city"], df_qcode["links"]):
         print("-"*5)
-        missed_qcode = rerun(qcode_scraper.q_code_main, s3_bucket, s3_path, rs_table, base_loc, [city, link])
+        missed_qcode, keys_written = rerun(qcode_scraper.q_code_main, s3_bucket, s3_path, rs_table, base_loc, [city, link])
         if missed_qcode:
             missed_municipal.append(missed_qcode)
         else:
-            print("q code links successfully crawled")
+            keys_written_qcode += keys_written
+    if missed_len == len(missed_municipal):
+        print("q code links successfully crawled")
 
     if len(missed_municipal) > 0:
         for item in missed_municipal:
