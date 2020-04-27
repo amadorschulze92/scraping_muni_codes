@@ -85,6 +85,7 @@ def save_doc(driver):
 
 
 def get_update_date(driver):
+    """grab the date that the document was last updated"""
     my_date = []
     date_xpath = "//*[@id='pgFooter']"
     switch_date_xpath = "//p"
@@ -103,6 +104,7 @@ def get_update_date(driver):
 
 
 def downloads_done(path, iterations):
+    """wait till download finishes then return the path of download"""
     for i in range(iterations):
         if os.path.isfile(path):
             return path
@@ -112,6 +114,7 @@ def downloads_done(path, iterations):
 
 
 def split_lvl2_docs(new_path):
+    """split document into level 2 documents"""
     with open(f"{new_path}", "r") as f:
         text_file = f.read()
     lines = text_file.strip().split("\n")
