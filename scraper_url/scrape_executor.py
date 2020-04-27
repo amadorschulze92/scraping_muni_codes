@@ -57,7 +57,7 @@ def main():
     red_table = red_sch + "." + tbl
     red_db = "staging"
 
-    rs_table = redshift_status_check(red_table,red_db)
+    rs_table = redshift_status_check(red_table, red_db)
 
     missed_municipal = []
     sleep(2)

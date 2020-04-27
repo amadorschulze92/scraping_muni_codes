@@ -77,12 +77,12 @@ def check_for_update(date, muni, rs_table):
         return True
 
 
-def s3_delta(muni, title, text, rs_table):
+def diff_score(key, table):
 
-    # read in previous version using muni and title
+    # extract
     # compute diff and store as delta
     delta = None
-
+    new_text = None
     return delta
 
 
