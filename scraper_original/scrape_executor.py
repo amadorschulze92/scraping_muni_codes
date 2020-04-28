@@ -57,7 +57,11 @@ def main():
     red_table = red_sch + "." + tbl
     red_db = "staging"
 
-    rs_table = redshift_status_check(red_table,red_db)
+    if check_if_table_exists_on_redshift(red_table, dbname='staging', geoserver=False):
+        rs_table = redshift_status_check(red_table,red_db)
+    else:
+        setup_initial_table(s3_bucket,s3_path, red_table, red_db)
+        rs_table = redshift_status_check(red_table, red_db)
 
     missed_municipal = []
     sleep(2)

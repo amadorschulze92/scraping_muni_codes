@@ -45,6 +45,40 @@ def make_path(base_loc, city, num_date):
     return path
 
 
+def setup_initial_table(bucket, pref, red_table, red_db):
+    # create redshift table from S3
+
+    # pull keys and generate dataframe
+
+    keys = sorted(list_s3_keys(bucket, Prefix=pref))
+    df = pd.DataFrame(["N/A", 0, "N/A", False, 0, "N/A"]).T
+    column_names = ["muni", "date", "doc_title", "zoning", "diff", "s3_key"]
+    df.columns = column_names
+    df_s3_key = "csv_cache/muni_scrape.csv"
+
+    # post to s3
+
+    post_df_to_s3(df, bucket, df_s3_key)
+
+    # Define dtypes and post to Redshift
+
+    df_types = {'muni': 'varchar',
+                'date': 'date',
+                'doc_title': 'varchar',
+                's3_key': 'varchar',
+                'zoning': 'boolean',
+                'diff': 'float'}
+
+    create_table_args = {'tablename': red_table,
+                         's3_path': 's3://{}/{}'.format(bucket, df_s3_key),
+                         'ctypes': df_types,
+                         'dbname': red_db}
+
+    create_redshift_table_via_s3(**create_table_args)
+
+    delete_s3_keys(bucket, Prefix="csv_cache")
+
+
 def redshift_status_check(red_tbl, red_db):
 
     # this function creates a pd df from the current redshift table of muni docs
