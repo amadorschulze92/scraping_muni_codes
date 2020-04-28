@@ -107,7 +107,7 @@ def diff_zone_check(bucket, s3_doc_new, table):
     muni_table = table.loc[(table.muni == muni) & (table.doc_title == doc_title)]
     muni_table.sort_values("date", ascending=False)
     if len(muni_table) > 1:
-        s3_doc_old = muni_table.s3_key[1]
+        s3_doc_old = muni_table.s3_key[0]
     else:
         s3_doc_old = False
 

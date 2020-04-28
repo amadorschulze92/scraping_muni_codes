@@ -265,10 +265,11 @@ def municode_scraper(s3_bucket, s3_path, rs_table, base_loc, muni_tuple):
         update_date = datetime.strptime("-".join(update_date), '%B-%d,-%Y').date()
 
         update_date = update_date.strftime('%m-%d-%y')
-        
-        if not check_for_update(update_date, muni, rs_table):
-            print(f'{muni} not updated')
-            return False, keys_written
+
+        if len(rs_table) > 0:
+            if not check_for_update(update_date, muni, rs_table):
+                print(f'{muni} not updated')
+                return False, keys_written
 
         # check for popup-window
 
