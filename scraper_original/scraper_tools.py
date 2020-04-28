@@ -1,5 +1,4 @@
 import re
-from datetime import datetime
 import pandas as pd
 import os
 import sys
@@ -58,25 +57,7 @@ def setup_initial_table(bucket, pref, red_table, red_db):
 
     # post to s3
 
-    post_df_to_s3(df, bucket, df_s3_key)
-
-    # Define dtypes and post to Redshift
-
-    df_types = {'muni': 'varchar',
-                'date': 'date',
-                'doc_title': 'varchar',
-                'zoning': 'boolean',
-                'diff': 'float',
-                's3_key': 'varchar'}
-
-    create_table_args = {'tablename': red_table,
-                         's3_path': 's3://{}/{}'.format(bucket, df_s3_key),
-                         'ctypes': df_types,
-                         'dbname': red_db}
-
-    create_redshift_table_via_s3(**create_table_args)
-
-    delete_s3_keys(bucket, Prefix="csv_cache")
+    create_doc_table(df, bucket, red_table, red_db)
 
 
 def redshift_status_check(red_tbl, red_db):
@@ -99,7 +80,7 @@ def check_for_update(date, muni, rs_table):
 
     if len(muni_dates) > 0:
 
-        most_recent = muni_dates[0]
+        most_recent = list(muni_dates)[0]
 
         if date > most_recent:
 
@@ -161,6 +142,32 @@ def diff_zone_check(bucket, s3_doc_new, table):
     return [zone_check(new_text), diff]
 
 
+def create_doc_table(df, bucket, red_table, red_db):
+    df_s3_key = "csv_cache/muni_scrape.csv"
+
+    # post to s3
+
+    post_df_to_s3(df, bucket, df_s3_key)
+
+    # Define dtypes and post to Redshift
+
+    df_types = {'muni': 'varchar',
+                'date': 'date',
+                'doc_title': 'varchar',
+                'zoning': 'boolean',
+                'diff': 'float',
+                's3_key': 'varchar'}
+
+    create_table_args = {'tablename': red_table,
+                         's3_path': 's3://{}/{}'.format(bucket, df_s3_key),
+                         'ctypes': df_types,
+                         'dbname': red_db}
+
+    create_redshift_table_via_s3(**create_table_args)
+
+    delete_s3_keys(bucket, Prefix="csv_cache")
+
+
 def table_builder(bucket, s3_docs, table):
     df_list = []
     for doc in s3_docs:
@@ -171,13 +178,17 @@ def table_builder(bucket, s3_docs, table):
 
     column_names = ["muni", "date", "doc_title", "zoning", "diff", "s3_key"]
     df.columns = column_names
-    df_s3_key = "csv_cache/muni_scrape.csv"
-
-    # post to s3
-
-    # post_df_to_s3(df, bucket, df_s3_key)
 
     return df
+
+
+def append_new_rows(cache, main_table, red_db):
+
+    insert_cmd = f'INSERT INTO {main_table} (SELECT * FROM {cache});'
+    execute_redshift_cmds([insert_cmd], dbname=red_db)
+
+    drop_cache_table_cmd = 'DROP TABLE IF EXISTS {}'.format(cache)
+    execute_redshift_cmds([drop_cache_table_cmd], dbname=red_db)
 
 
 def s3_file_writer(s3_bucket, s3_path, base_loc, muni, update_date, title, text):

@@ -25,9 +25,10 @@ def rerun(my_funct, s3_bucket, s3_path, s3_table, base_loc, muni_tuple):
         final, keys_written = my_funct(s3_bucket, s3_path, s3_table, base_loc, muni_tuple)
         if final:
             print(f'{muni_tuple[0]} has failed again')
-            return f'{muni_tuple[0]}: {muni_tuple[1]}', []
+            return f'{muni_tuple[0]}: {muni_tuple[1]}', keys_written
         else:
             print('written successfully after second run')
+            return '', keys_written
     else:
 
         print(f"{muni_tuple[0]} completed in {time.time() - start} seconds")
@@ -53,7 +54,7 @@ def main():
     s3_path = "test_kjafshar/"
 
     red_sch = "test_kjafshar"
-    tbl = "cache_muni_scraping"
+    tbl = "muni_scraping"
     red_table = red_sch + "." + tbl
     red_db = "staging"
 
@@ -66,16 +67,26 @@ def main():
     missed_municipal = []
     sleep(2)
     keys_written_municode = []
+    tuples_muni=[]
     for m in tuples_muni:
         print("-"*5)
         missed_municode, keys_written = rerun(muni_code_scraper.municode_scraper, s3_bucket, s3_path, rs_table, base_loc, m)
         if missed_municode:
             missed_municipal.append(missed_municode)
+            keys_written_municode += keys_written
         else:
             keys_written_municode += keys_written
 
     if not missed_municipal:
         print("municode links successfully crawled")
+
+    if len(keys_written_municode) > 0:
+
+        cache_table = ".cache_".join(red_table.split("."))
+        new_table_rows = table_builder(s3_bucket, keys_written_municode, rs_table)
+        create_doc_table(new_table_rows, s3_bucket, cache_table, red_db)
+        append_new_rows(cache_table, red_table, red_db)
+
 
     # get data from codepub
     missed_len = len(missed_municipal)
@@ -87,8 +98,17 @@ def main():
             missed_municipal.append(missed_codepub)
         else:
             keys_written_codepub += keys_written
+
     if missed_len == len(missed_municipal):
         print("code publishing links successfully crawled")
+
+    if len(keys_written_codepub) > 0:
+
+        cache_table = "cache_" + red_table
+        new_table_rows = table_builder(s3_bucket, keys_written_codepub, rs_table)
+        create_doc_table(new_table_rows, s3_bucket, cache_table, red_db)
+        append_new_rows(cache_table, red_table, red_db)
+
 
     # get data from qcode
     missed_len = len(missed_municipal)
@@ -107,11 +127,12 @@ def main():
         for item in missed_municipal:
             print(item)
 
-    for keys in [keys_written_municode, keys_written_codepub, keys_written_qcode]:
+    if len(keys_written_qcode) > 0:
 
-        if len(keys) > 0:
-            new_table_rows = table_builder(s3_bucket, keys, rs_table)
-            # append new_table_rows
+        cache_table = "cache_" + red_table
+        new_table_rows = table_builder(s3_bucket, keys_written_qcode, rs_table)
+        create_doc_table(new_table_rows, s3_bucket, cache_table, red_db)
+        append_new_rows(cache_table, red_table, red_db)
 
 
 if __name__ == '__main__':

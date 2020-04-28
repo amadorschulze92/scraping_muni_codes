@@ -1,7 +1,8 @@
 from selenium import webdriver
 from time import sleep
-
+import os
 from scraper_tools import *
+from datetime import datetime
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -176,7 +177,7 @@ def toc_crawler(driver):
     return "\n".join(l_2_doc)
 
 
-def page_crawler(driver, s3_bucket, s3_path, rs_table, base_loc, muni, update_date):
+def page_crawler(driver, s3_bucket, s3_path, rs_table, base_loc, muni, date_str):
     # this is the code which runs after the driver reaches the muni landing
     # it will call extraction and toc crawler as needed
 
@@ -205,11 +206,11 @@ def page_crawler(driver, s3_bucket, s3_path, rs_table, base_loc, muni, update_da
             return True, keys_written
 
         if driver.find_elements_by_css_selector("div[ng-switch-when='CHUNKS']"):
-            key = s3_file_writer(s3_bucket, s3_path, base_loc, muni, update_date, title, extract_text(driver))
+            key = s3_file_writer(s3_bucket, s3_path, base_loc, muni, date_str, title, extract_text(driver))
             if key:
                 keys_written.append(key)
         elif driver.find_elements_by_css_selector("div[ng-switch-when='TOC']"):
-            key = s3_file_writer(s3_bucket, s3_path, base_loc, muni, update_date, title, toc_crawler(driver))
+            key = s3_file_writer(s3_bucket, s3_path, base_loc, muni, date_str, title, toc_crawler(driver))
             if key:
                 keys_written.append(key)
         else:
@@ -263,8 +264,7 @@ def municode_scraper(s3_bucket, s3_path, rs_table, base_loc, muni_tuple):
         update_date = update_date.split(' ')[-3:]
 
         update_date = datetime.strptime("-".join(update_date), '%B-%d,-%Y').date()
-
-        update_date = update_date.strftime('%m-%d-%y')
+        date_str = update_date.strftime("%m-%d-%y")
 
         if len(rs_table) > 0:
             if not check_for_update(update_date, muni, rs_table):
@@ -281,7 +281,7 @@ def municode_scraper(s3_bucket, s3_path, rs_table, base_loc, muni_tuple):
         except:
             pass
 
-        failed_crawl, keys_written = page_crawler(driver, s3_bucket, s3_path, rs_table, base_loc, muni, update_date)
+        failed_crawl, keys_written = page_crawler(driver, s3_bucket, s3_path, rs_table, base_loc, muni, date_str)
 
         if failed_crawl:
             driver.quit()
