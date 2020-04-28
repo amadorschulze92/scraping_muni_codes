@@ -103,6 +103,12 @@ def main():
         for item in missed_municipal:
             print(item)
 
+    for keys in [keys_written_municode, keys_written_codepub, keys_written_qcode]:
+
+        if len(keys) > 0:
+            new_table_rows = table_builder(s3_bucket, keys, rs_table)
+            # append new_table_rows
+
 
 if __name__ == '__main__':
     main()

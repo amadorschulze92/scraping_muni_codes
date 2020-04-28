@@ -1,10 +1,12 @@
 import re
 from datetime import datetime
+import pandas as pd
 import os
 import sys
 from selenium.webdriver.support.ui import WebDriverWait
 import time
 import getpass
+import difflib
 
 user = getpass.getuser()
 sys.dont_write_bytecode = True
@@ -43,14 +45,14 @@ def make_path(base_loc, city, num_date):
     return path
 
 
-def redshift_status_check(red_tbl,red_db):
+def redshift_status_check(red_tbl, red_db):
 
     # this function creates a pd df from the current redshift table of muni docs
     # this df is used to check the status decide how to treat crawled docs
 
     sql_statement = f'SELECT * FROM {red_tbl}'
     df = pull_large_df_from_redshift_sql(sql_statement, dbname=red_db)
-    df.drop(columns="row_number",inplace=True)
+    df.drop(columns="row_number", inplace=True)
     return df
 
 
@@ -77,13 +79,71 @@ def check_for_update(date, muni, rs_table):
         return True
 
 
-def diff_score(key, table):
+def zone_check(doc_text):
 
-    # extract
-    # compute diff and store as delta
-    delta = None
-    new_text = None
-    return delta
+    if "zone" in doc_text:
+        return True
+    else:
+        return False
+
+
+def diff_check(new_text, old_text):
+
+    diff_text = list(difflib.unified_diff(new_text, old_text))
+    diff = len(diff_text) / len(old_text)
+
+    return diff
+
+
+def diff_zone_check(bucket, s3_doc_new, table):
+    muni = s3_doc_new.split("/")[1]
+    doc_title = s3_doc_new.split("/")[3]
+
+    s3_doc_new_local = "^".join(s3_doc_new.split("/")[-3:])
+    download_file_from_s3(bucket, s3_doc_new, s3_doc_new_local)
+    with open(s3_doc_new_local) as f:
+        new_text = f.read()
+
+    muni_table = table.loc[(table.muni == muni) & (table.doc_title == doc_title)]
+    muni_table.sort_values("date", ascending=False)
+    if len(muni_table) > 1:
+        s3_doc_old = muni_table.s3_key[1]
+    else:
+        s3_doc_old = False
+
+    if s3_doc_old:
+
+        s3_doc_old_local = "^".join(s3_doc_old.split("/")[-3:])
+        download_file_from_s3(bucket, s3_doc_old, s3_doc_old_local)
+
+        with open(s3_doc_old_local) as f:
+            old_text = f.read()
+
+        diff = diff_check(new_text, old_text)
+
+    else:
+        diff = 0
+
+    return [zone_check(new_text), diff]
+
+
+def table_builder(bucket, s3_docs, table):
+    df_list = []
+    for doc in s3_docs:
+        new_row = doc.split("/")[1:] + diff_zone_check(bucket, doc, table) + [doc]
+        df_list.append(new_row)
+
+    df = pd.DataFrame(df_list)
+
+    column_names = ["muni", "date", "doc_title", "zoning", "diff", "s3_key"]
+    df.columns = column_names
+    df_s3_key = "csv_cache/muni_scrape.csv"
+
+    # post to s3
+
+    # post_df_to_s3(df, bucket, df_s3_key)
+
+    return df
 
 
 def s3_file_writer(s3_bucket, s3_path, base_loc, muni, update_date, title, text):
