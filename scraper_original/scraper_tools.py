@@ -51,7 +51,7 @@ def setup_initial_table(bucket, pref, red_table, red_db):
     # pull keys and generate dataframe
 
     keys = sorted(list_s3_keys(bucket, Prefix=pref))
-    df = pd.DataFrame(["N/A", 0, "N/A", False, 0, "N/A"]).T
+    df = pd.DataFrame(["N/A", "1900-01-01", "N/A", False, 0, "N/A"]).T
     column_names = ["muni", "date", "doc_title", "zoning", "diff", "s3_key"]
     df.columns = column_names
     df_s3_key = "csv_cache/muni_scrape.csv"
@@ -65,9 +65,9 @@ def setup_initial_table(bucket, pref, red_table, red_db):
     df_types = {'muni': 'varchar',
                 'date': 'date',
                 'doc_title': 'varchar',
-                's3_key': 'varchar',
                 'zoning': 'boolean',
-                'diff': 'float'}
+                'diff': 'float',
+                's3_key': 'varchar'}
 
     create_table_args = {'tablename': red_table,
                          's3_path': 's3://{}/{}'.format(bucket, df_s3_key),
