@@ -122,7 +122,7 @@ def split_lvl2_docs(new_path):
     lvl2_start = 0
     lvl2_end = 0
     for line_num, li in enumerate(lines):
-        if re.search('[TtIiLlEe]{5,}+\s\d+\s[A-Z\s\(\)]{4,}', li):
+        if re.search('[TtIiLlEe]{5,}\s\d+\s[A-Z\s\(\)]{4,}', li):
             lvl2_end = line_num
             lvl2_docs[lines[lvl2_start]] = '\n'.join(lines[lvl2_start:lvl2_end])
             lvl2_start = line_num
