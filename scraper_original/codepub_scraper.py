@@ -49,13 +49,14 @@ def handle_checkboxes(driver, s_sleep, l_sleep):
     elif len(driver.find_elements_by_xpath(my_xpath)) > 80:
         my_xpath = "//form/p/input[@type='checkbox']"
     # check all the boxes
+    missed_checks = 0
     for checkbox in driver.find_elements_by_xpath(my_xpath):
         time.sleep(random.uniform(s_sleep,l_sleep))
         try:
             checkbox.location_once_scrolled_into_view
             checkbox.click()
         except:
-            missed_checks.append(checkbox)
+            missed_checks += 1
     return driver
 
 
