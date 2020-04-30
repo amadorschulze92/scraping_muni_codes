@@ -83,7 +83,6 @@ def main():
 
     if len(keys_written_municode) > 0:
 
-        cache_table = ".cache_".join(red_table.split("."))
         new_table_rows = table_builder(s3_bucket, keys_written_municode, rs_table)
         create_doc_table(new_table_rows, s3_bucket, cache_table, red_db)
         append_new_rows(cache_table, red_table, red_db)
@@ -92,7 +91,7 @@ def main():
     # get data from codepub
     missed_len = len(missed_municipal)
     keys_written_codepub = []
-    for city, link in zip(df_codepub["city"], df_codepub["links"]):
+    for city, link in list(zip(df_codepub["city"], df_codepub["links"])):
         print("-"*5)
         missed_codepub, keys_written = rerun(codepub_scraper.code_pub_main, s3_bucket, s3_path, rs_table, base_loc, [city, link])
         if missed_codepub:
@@ -113,7 +112,7 @@ def main():
     # get data from qcode
     missed_len = len(missed_municipal)
     keys_written_qcode = []
-    for city, link in zip(df_qcode["city"], df_qcode["links"]):
+    for city, link in list(zip(df_qcode["city"], df_qcode["links"]))[0:0]:
         print("-"*5)
         missed_qcode, keys_written = rerun(qcode_scraper.q_code_main, s3_bucket, s3_path, rs_table, base_loc, [city, link])
         if missed_qcode:

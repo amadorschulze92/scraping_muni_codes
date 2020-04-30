@@ -111,7 +111,7 @@ def q_code_main(s3_bucket, s3_path, rs_table, base_loc, start_link):
                 scraper_tools.find_click_n_wait(driver, up_xpath, my_xpath, 0, 3, 0.1)
                 update_date = scraper_tools.extract_date(update_date_messy)
                 key = scraper_tools.s3_file_writer(s3_bucket, s3_path, base_loc, city, update_date, level2_title, '\n'.join(my_doc))
-                if key and key not in rs_table.s3_key:
+                if key and (key not in list(rs_table.s3_key)):
                     keys_written.append(key)
                 my_doc = [city]
         except:
