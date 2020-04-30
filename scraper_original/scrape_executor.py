@@ -56,6 +56,7 @@ def main():
     red_sch = "test_kjafshar"
     tbl = "muni_scraping"
     red_table = red_sch + "." + tbl
+    cache_table = ".cache_".join(red_table.split("."))
     red_db = "staging"
 
     if check_if_table_exists_on_redshift(red_table, dbname='staging', geoserver=False):
@@ -104,7 +105,6 @@ def main():
 
     if len(keys_written_codepub) > 0:
 
-        cache_table = "cache_" + red_table
         new_table_rows = table_builder(s3_bucket, keys_written_codepub, rs_table)
         create_doc_table(new_table_rows, s3_bucket, cache_table, red_db)
         append_new_rows(cache_table, red_table, red_db)
@@ -129,7 +129,6 @@ def main():
 
     if len(keys_written_qcode) > 0:
 
-        cache_table = "cache_" + red_table
         new_table_rows = table_builder(s3_bucket, keys_written_qcode, rs_table)
         create_doc_table(new_table_rows, s3_bucket, cache_table, red_db)
         append_new_rows(cache_table, red_table, red_db)
