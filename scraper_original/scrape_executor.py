@@ -91,7 +91,7 @@ def main():
     # get data from codepub
     missed_len = len(missed_municipal)
     keys_written_codepub = []
-    for city, link in zip(df_codepub["city"], df_codepub["links"]):
+    for city, link in list(zip(df_codepub["city"], df_codepub["links"])):
         print("-"*5)
         missed_codepub, keys_written = rerun(codepub_scraper.code_pub_main, s3_bucket, s3_path, rs_table, base_loc, [city, link])
         if missed_codepub:
