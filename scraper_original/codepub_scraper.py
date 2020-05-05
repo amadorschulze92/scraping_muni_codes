@@ -170,7 +170,7 @@ def code_pub_main(s3_bucket, s3_path, rs_table, base_loc, start_link):
             for lvl2_header, lvl2_text in lvl2_docs.items():
                 print(lvl2_header)
                 key = scraper_tools.s3_file_writer(s3_bucket, s3_path, base_loc, city, update_date, lvl2_header, lvl2_text)
-                if key:
+                if key and (key not in list(rs_table.s3_key)):
                     keys_written.append(key)
             driver.close()
             driver.quit()
