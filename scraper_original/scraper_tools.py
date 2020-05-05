@@ -3,6 +3,8 @@ import pandas as pd
 import os
 import sys
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 import time
 import getpass
 import difflib
@@ -16,7 +18,7 @@ from utils_io import *
 
 
 def extract_date(messy_text):
-    messy_text = "\n".join(messy_text)
+    # messy_text = "\n".join(messy_text)
     if re.search('passed\s.*([A-Z].+?\d+)\.', messy_text):
         match = re.search(r'passed\s.*([A-Z].+?\d+)\.', messy_text)
         match_date = datetime.strptime(match.group(1), '%B %d, %Y').date()

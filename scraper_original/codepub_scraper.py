@@ -14,6 +14,7 @@ import requests
 import sys
 import os
 import scraper_tools
+from time import sleep
 
 
 def every_downloads_chrome(driver):
@@ -57,6 +58,7 @@ def handle_checkboxes(driver, s_sleep, l_sleep):
             checkbox.click()
         except:
             missed_checks += 1
+    print(missed_checks)
     return driver
 
 
@@ -123,7 +125,7 @@ def split_lvl2_docs(new_path):
     lvl2_start = 0
     lvl2_end = 0
     for line_num, li in enumerate(lines):
-        if re.search('[TtIiLlEe]{5,}\s\d+\s[A-Z\s\(\)]{4,}', li):
+        if re.search('[TtIiLlEe]{5,}\s\d+\s{1,2}[A-Z\(\)]{4,}', li):
             lvl2_end = line_num
             lvl2_docs[lines[lvl2_start]] = '\n'.join(lines[lvl2_start:lvl2_end])
             lvl2_start = line_num
@@ -157,16 +159,16 @@ def code_pub_main(s3_bucket, s3_path, rs_table, base_loc, start_link):
             driver = handle_checkboxes(driver, 0.4, 0.5)
             # save the document
             driver = save_doc(driver)
-            update_date = scraper_tools.extract_date(messy_date)
+            update_date = scraper_tools.extract_date(messy_date[0])
             # puts file in right folder and waits for files to download
             old_path = base_loc+city+".txt"
             new_path = downloads_done(old_path, 36)
-            #path = scraper_tools.make_path(base_loc, city, update_date)
             path = scraper_tools.make_path(base_loc, city, update_date)
             new_path = path+city+".txt"
             os.rename(old_path, new_path)
             lvl2_docs = split_lvl2_docs(new_path)
             for lvl2_header, lvl2_text in lvl2_docs.items():
+                print(lvl2_header)
                 key = scraper_tools.s3_file_writer(s3_bucket, s3_path, base_loc, city, update_date, lvl2_header, lvl2_text)
                 if key:
                     keys_written.append(key)
