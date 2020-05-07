@@ -14,6 +14,7 @@ import requests
 import sys
 import os
 import scraper_tools
+from time import sleep
 
 
 def find_click_n_wait(driver, current_xpath, next_xpath, section_num, wait_time, extra_time):
@@ -85,7 +86,10 @@ def q_code_main(s3_bucket, s3_path, rs_table, base_loc, start_link):
             for h_sec_num in range(len(driver.find_elements_by_xpath(my_xpath))):
                 h_sections = driver.find_elements_by_xpath(my_xpath)
                 level2_title = h_sections[h_sec_num].text
+                print(level2_title)
                 my_doc.append(level2_title)
+                if 'reserved' in level2_title.lower():
+                    continue
                 scraper_tools.click_n_wait(driver, my_xpath, h_sections, h_sec_num, 3, 0.1)
                 # level 3
                 for l_sec_num in range(len(driver.find_elements_by_xpath(my_xpath))):
@@ -111,7 +115,7 @@ def q_code_main(s3_bucket, s3_path, rs_table, base_loc, start_link):
                 scraper_tools.find_click_n_wait(driver, up_xpath, my_xpath, 0, 3, 0.1)
                 update_date = scraper_tools.extract_date(update_date_messy)
                 key = scraper_tools.s3_file_writer(s3_bucket, s3_path, base_loc, city, update_date, level2_title, '\n'.join(my_doc))
-                if key and (key not in list(rs_table.s3_key)):
+                if key:
                     keys_written.append(key)
                 my_doc = [city]
         except:
