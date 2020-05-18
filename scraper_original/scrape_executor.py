@@ -68,7 +68,6 @@ def main():
     missed_municipal = []
     sleep(2)
     keys_written_municode = []
-    tuples_muni=[]
     for m in tuples_muni:
         print("-"*5)
         missed_municode, keys_written = rerun(muni_code_scraper.municode_scraper, s3_bucket, s3_path, rs_table, base_loc, m)
