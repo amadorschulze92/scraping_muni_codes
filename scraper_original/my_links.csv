@@ -78,7 +78,7 @@
 76,san anselmo,['http://library.municode.com/index.aspx?clientId=16603&stateId=5&stateName=California'],municode
 77,san bruno,['http://qcode.us/codes/sanbruno/'],qcode
 78,san carlos,['http://www.codepublishing.com/CA/sancarlos/'],codepub
-79,san francisco,"['http://www.amlegal.com/nxt/gateway.dll?f=templates&fn=default.htm&vid=amlegal:sanfrancisco_ca', 'http://www.amlegal.com/nxt/gateway.dll/California/park/parkcode?f=templates$fn=default.htm$3.0$vid=amlegal:sanfrancisco_ca$sync=1', 'http://www.amlegal.com/nxt/gateway.dll?f=templates&fn=default.htm&vid=amlegal:sf_building', 'http://www.amlegal.com/nxt/gateway.dll/California/health/healthcode?f=templates$fn=default.htm$3.0$vid=amlegal:sanfrancisco_ca$sync=1']",amlegal
+79,san francisco,['https://codelibrary.amlegal.com/codes/san_francisco/latest/overview'],amlegal
 80,san leandro,['http://qcode.us/codes/sanleandro/'],qcode
 81,san mateo,['http://www.cityofsanmateo.org/index.aspx?NID=164'],other
 82,san mateo county,['http://library.municode.com/index.aspx?clientId=16029'],municode

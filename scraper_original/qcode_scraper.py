@@ -88,7 +88,7 @@ def q_code_main(s3_bucket, s3_path, rs_table, base_loc, start_link):
                 level2_title = h_sections[h_sec_num].text
                 print(level2_title)
                 my_doc.append(level2_title)
-                if 'reserved' in level2_title.lower():
+                if ('reserved' in level2_title.lower()) or (level2_title.lower() == 'note'):
                     continue
                 scraper_tools.click_n_wait(driver, my_xpath, h_sections, h_sec_num, 3, 0.1)
                 # level 3
@@ -96,6 +96,8 @@ def q_code_main(s3_bucket, s3_path, rs_table, base_loc, start_link):
                     try:
                         l_sections = driver.find_elements_by_xpath(my_xpath)
                         my_doc.append(l_sections[l_sec_num].text)
+                        if ('reserved' in l_sections[l_sec_num].text.lower()) or (l_sections[l_sec_num].text.lower() == 'note'):
+                            continue
                         scraper_tools.click_n_wait(driver, showall_xpath, l_sections, l_sec_num, 3, 0.1)
                         scraper_tools.find_click_n_wait(driver, showall_xpath, high_title_xpath, 0, 3, 0.1)
                         h_title = driver.find_elements_by_xpath(high_title_xpath)
