@@ -28,6 +28,9 @@ def extract_date(messy_text):
             match_date = datetime.strptime(match.group(1), '%Y-%m').date()
         except:
             match_date = datetime.strptime(match.group(1), '%B %Y').date()
+    elif re.search(r'effective\s(.+?)\scode\ssupplement\.', messy_text):
+        match = re.search(r'effective\s(.+?)\scode\ssupplement\.', messy_text)
+        match_date = datetime.strptime(match.group(1), '%B %d, %Y').date()
     else:
         print("could not match date")
         print(messy_text)

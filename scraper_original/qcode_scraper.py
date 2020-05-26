@@ -83,6 +83,12 @@ def q_code_main(s3_bucket, s3_path, rs_table, base_loc, start_link):
             driver.switch_to.frame('RIGHT')
             scraper_tools.waiting_for_presence_of(driver, my_xpath, 3, 0.1)
             # level 2
+            if len(driver.find_elements_by_xpath(my_xpath)) <= 4:
+                for h_sec_num in range(len(driver.find_elements_by_xpath(my_xpath))):
+                    h_sections = driver.find_elements_by_xpath(my_xpath)
+                    level2_title = h_sections[h_sec_num].text
+                    if 'code' in level2_title.lower():
+                        scraper_tools.click_n_wait(driver, my_xpath, h_sections, h_sec_num, 3, 0.1)
             for h_sec_num in range(len(driver.find_elements_by_xpath(my_xpath))):
                 h_sections = driver.find_elements_by_xpath(my_xpath)
                 level2_title = h_sections[h_sec_num].text
@@ -96,24 +102,33 @@ def q_code_main(s3_bucket, s3_path, rs_table, base_loc, start_link):
                     try:
                         l_sections = driver.find_elements_by_xpath(my_xpath)
                         my_doc.append(l_sections[l_sec_num].text)
+                        # skip sections that are reserved or notes
                         if ('reserved' in l_sections[l_sec_num].text.lower()) or (l_sections[l_sec_num].text.lower() == 'note'):
                             continue
-                        scraper_tools.click_n_wait(driver, showall_xpath, l_sections, l_sec_num, 3, 0.1)
-                        scraper_tools.find_click_n_wait(driver, showall_xpath, high_title_xpath, 0, 3, 0.1)
-                        h_title = driver.find_elements_by_xpath(high_title_xpath)
-                        my_doc.append(h_title[0].text)
-                        # get text
-                        for content, l_title in zip(driver.find_elements_by_xpath(content_xpath), driver.find_elements_by_xpath(low_title_xpath)):
-                            my_doc.append(l_title.text)
-                            my_doc.append(content.text)
-                        # go to previous page
-                        find_click_n_wait(driver, up_xpath, my_xpath, 0, 3, 0.1)
+                        l_sections[l_sec_num].click()
+                        # if there is no showall button use the brute force way to go back
+                        if len(driver.find_elements_by_xpath(showall_xpath)) != 0:
+                            waiting_for_presence_of(driver, showall_xpath, 3, 0.1)
+                            scraper_tools.find_click_n_wait(driver, showall_xpath, high_title_xpath, 0, 3, 0.1)
+                            # get text
+                            for content, l_title in zip(driver.find_elements_by_xpath(content_xpath), driver.find_elements_by_xpath(low_title_xpath)):
+                                my_doc.append(l_title.text)
+                                my_doc.append(content.text)
+                            # go to previous page
+                            find_click_n_wait(driver, up_xpath, my_xpath, 0, 3, 0.1)
+                        elif len(driver.find_elements_by_xpath(content_xpath)) != 0:
+                            # get text
+                            for content in driver.find_elements_by_xpath(content_xpath):
+                                my_doc.append(content.text)
+                            # go to previous page
+                            find_click_n_wait(driver, up_xpath, my_xpath, 0, 3, 0.1)
+                        else:
+                            driver.get(link)
+                            driver.switch_to.frame('RIGHT')
+                            scraper_tools.find_click_n_wait(driver, my_xpath, my_xpath, h_sec_num, 3, 0.1)
                     except:
                         my_doc.append("-_-_-missing-_-_-")
                         missing_sections += 1
-                        driver.get(link)
-                        driver.switch_to.frame('RIGHT')
-                        scraper_tools.find_click_n_wait(driver, my_xpath, my_xpath, h_sec_num, 3, 0.1)
                 scraper_tools.find_click_n_wait(driver, up_xpath, my_xpath, 0, 3, 0.1)
                 update_date = scraper_tools.extract_date(update_date_messy)
                 key = scraper_tools.s3_file_writer(s3_bucket, s3_path, base_loc, city, update_date, level2_title, '\n'.join(my_doc))
