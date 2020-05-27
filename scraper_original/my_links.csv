@@ -39,7 +39,7 @@
 37,hercules,['http://www.codepublishing.com/CA/hercules/'],codepub
 38,hillsborough,['http://library.municode.com/index.aspx?clientId=16404'],municode
 39,lafayette,['http://www.municode.com/Resources/gateway.asp?pid=16435&sid=5'],municode
-40,larkspur,['http://www.codepublishing.com/ca/larkspur.html'],codepub
+40,larkspur,['http://www.codepublishing.com/ca/larkspur.html'],other
 41,livermore,['http://www.codepublishing.com/CA/Livermore.html'],codepub
 42,los altos,['http://www.municode.com/Resources/gateway.asp?pid=16460&sid=5'],municode
 43,los altos hills,['http://qcode.us/codes/losaltoshills/'],qcode
@@ -63,7 +63,7 @@
 61,orinda,['http://www.municode.com/Resources/gateway.asp?pid=16541&sid=5'],municode
 62,pacifica,['http://www.municode.com/Resources/gateway.asp?pid=16544&sid=5'],municode
 63,palo alto,['http://www.amlegal.com/library/ca/paloalto.shtml'],amlegal
-64,petaluma,['http://www.codepublishing.com/ca/petaluma.html'],codepub
+64,petaluma,['http://www.codepublishing.com/ca/petaluma.html'],other
 65,piedmont,['http://www.ci.piedmont.ca.us/citycode.shtml'],other
 66,pinole,['http://www.amlegal.com/pinole_ca/'],amlegal
 67,pittsburg,['http://www.codepublishing.com/ca/Pittsburg/'],codepub

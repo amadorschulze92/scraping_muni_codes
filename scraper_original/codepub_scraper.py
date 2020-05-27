@@ -161,7 +161,7 @@ def code_pub_main(s3_bucket, s3_path, rs_table, base_loc, start_link):
             driver = save_doc(driver)
             update_date = scraper_tools.extract_date(messy_date[0])
             # puts file in right folder and waits for files to download
-            old_path = base_loc+city+".txt"
+            old_path = base_loc+city.replace(' ', '')+".txt"
             new_path = downloads_done(old_path, 36)
             path = scraper_tools.make_path(base_loc, city, update_date)
             new_path = path+city+".txt"
