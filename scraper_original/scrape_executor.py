@@ -65,6 +65,7 @@ def main():
         setup_initial_table(s3_bucket,s3_path, red_table, red_db)
         rs_table = redshift_status_check(red_table, red_db)
 
+    # get data from codepub
     missed_municipal = []
     sleep(2)
     keys_written_municode = []
@@ -100,7 +101,7 @@ def main():
 
     if missed_len == len(missed_municipal):
         print("code publishing links successfully crawled")
-
+    keys_written_codepub = [key for key in keys_written_codepub if key not in rs_table.s3_key]
     if len(keys_written_codepub) > 0:
 
         new_table_rows = table_builder(s3_bucket, keys_written_codepub, rs_table)
@@ -124,7 +125,7 @@ def main():
     if len(missed_municipal) > 0:
         for item in missed_municipal:
             print(item)
-
+    keys_written_qcode = [key for key in keys_written_qcode if key not in rs_table.s3_key]
     if len(keys_written_qcode) > 0:
 
         new_table_rows = table_builder(s3_bucket, keys_written_qcode, rs_table)
