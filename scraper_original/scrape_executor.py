@@ -65,6 +65,7 @@ def main():
         setup_initial_table(s3_bucket,s3_path, red_table, red_db)
         rs_table = redshift_status_check(red_table, red_db)
 
+    # get data from codepub
     missed_municipal = []
     sleep(2)
     keys_written_municode = []
