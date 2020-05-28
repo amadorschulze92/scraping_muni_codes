@@ -252,3 +252,8 @@ def waiting_for_presence_of(driver, next_xpath, wait_time, extra_time):
     """wait till xpath is present, but usually needs a little extra time to load"""
     waiting = WebDriverWait(driver, wait_time).until(EC.presence_of_element_located((By.XPATH, next_xpath)))
     time.sleep(extra_time)
+
+def click_single_wait(driver, click_xpath, sleep_time, num=0):
+    my_click = driver.find_elements_by_xpath(click_xpath)
+    my_click[num].click()
+    time.sleep(sleep_time)
