@@ -106,16 +106,6 @@ def get_update_date(driver):
     return my_date
 
 
-def downloads_done(path, iterations):
-    """wait till download finishes then return the path of download"""
-    for i in range(iterations):
-        if os.path.isfile(path):
-            return path
-        else:
-            time.sleep(5)
-    print("failed")
-
-
 def split_lvl2_docs(new_path):
     """split document into level 2 documents"""
     with open(f"{new_path}", "r") as f:
@@ -162,7 +152,7 @@ def code_pub_main(s3_bucket, s3_path, rs_table, base_loc, start_link):
             update_date = scraper_tools.extract_date(messy_date[0])
             # puts file in right folder and waits for files to download
             old_path = base_loc+city.replace(' ', '')+".txt"
-            new_path = downloads_done(old_path, 36)
+            new_path = scraper_tools.downloads_done(old_path, 36)
             path = scraper_tools.make_path(base_loc, city, update_date)
             new_path = path+city+".txt"
             os.rename(old_path, new_path)

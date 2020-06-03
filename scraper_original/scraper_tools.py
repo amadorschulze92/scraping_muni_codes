@@ -257,3 +257,12 @@ def click_single_wait(driver, click_xpath, sleep_time, num=0):
     my_click = driver.find_elements_by_xpath(click_xpath)
     my_click[num].click()
     time.sleep(sleep_time)
+
+def downloads_done(path, iterations):
+    """wait till download finishes then return the path of download"""
+    for i in range(iterations):
+        if os.path.isfile(path):
+            return path
+        else:
+            time.sleep(5)
+    print("failed")
