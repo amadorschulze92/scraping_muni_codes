@@ -156,7 +156,9 @@ def code_pub_main(s3_bucket, s3_path, rs_table, base_loc, start_link):
             path = scraper_tools.make_path(base_loc, city, update_date)
             new_path = path+city+".txt"
             os.rename(old_path, new_path)
+            # split document by lvl 2 sections
             lvl2_docs = split_lvl2_docs(new_path)
+            # send each lvl 2 section to s3 as seperate doc
             for lvl2_header, lvl2_text in lvl2_docs.items():
                 print(lvl2_header)
                 key = scraper_tools.s3_file_writer(s3_bucket, s3_path, base_loc, city, update_date, lvl2_header, lvl2_text)
