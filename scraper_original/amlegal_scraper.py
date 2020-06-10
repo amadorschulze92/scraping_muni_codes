@@ -98,7 +98,7 @@ def amlegal_main(s3_bucket, s3_path, rs_table, base_loc, start_link):
                 # collapse past sections of toc to reduce website slowdown
                 scraper_tools.click_n_wait(driver, collapse_xpath, collapse_buttons, sec1_num, 10, 3)
                 # move text to s3
-                with open("new_row", 'r') as f:
+                with open(new_path, 'r') as f:
                     lvl1_text = f.readlines()
                 key = scraper_tools.s3_file_writer(s3_bucket, s3_path, base_loc, city, update_date, level_1_title, '\n'.join(lvl1_text))
                 if key and (key not in list(rs_table.s3_key)):
