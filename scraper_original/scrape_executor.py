@@ -99,7 +99,7 @@ def main():
             keys_written_codepub += keys_written
     if missed_len == len(missed_municipal):
         print("code publishing links successfully crawled")
-    keys_written_codepub = [key for key in keys_written_codepub if key not in rs_table.s3_key]
+    keys_written_codepub = [key for key in keys_written_codepub if key not in rs_table.s3_key.to_list()]
     if len(keys_written_codepub) > 0:
         new_table_rows = table_builder(s3_bucket, keys_written_codepub, rs_table)
         create_doc_table(new_table_rows, s3_bucket, cache_table, red_db)
@@ -118,7 +118,7 @@ def main():
             keys_written_qcode += keys_written
     if missed_len == len(missed_municipal):
         print("q code links successfully crawled")
-    keys_written_qcode = [key for key in keys_written_qcode if key not in rs_table.s3_key]
+    keys_written_qcode = [key for key in keys_written_qcode if key not in rs_table.s3_key.to_list()]
     if len(keys_written_qcode) > 0:
         new_table_rows = table_builder(s3_bucket, keys_written_qcode, rs_table)
         create_doc_table(new_table_rows, s3_bucket, cache_table, red_db)
@@ -138,7 +138,7 @@ def main():
         keys_written_amlegal += keys_written
     if missed_len == len(missed_municipal):
         print("amlegal link successfully crawled")
-    keys_written_amlegal = [key for key in keys_written_amlegal if key not in rs_table.s3_key]
+    keys_written_amlegal = [key for key in keys_written_amlegal if key not in rs_table.s3_key.to_list()]
     if len(keys_written_amlegal) > 0:
         new_table_rows = table_builder(s3_bucket, keys_written_amlegal, rs_table)
         create_doc_table(new_table_rows, s3_bucket, cache_table, red_db)
