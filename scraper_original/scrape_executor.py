@@ -67,19 +67,35 @@ def main():
 
     # get data from municode
     missed_municipal = []
+    muni_missed_municipal = []
     sleep(2)
     keys_written_municode = []
     for m in tuples_muni:
         print("-"*5)
         missed_municode, keys_written = rerun(muni_code_scraper.municode_scraper, s3_bucket, s3_path, rs_table, base_loc, m)
         if missed_municode:
-            missed_municipal.append(missed_municode)
+            muni_missed_municipal.append(missed_municode)
             keys_written_municode += keys_written
         else:
             keys_written_municode += keys_written
 
-    if not missed_municipal:
+    if not muni_missed_municipal:
         print("municode links successfully crawled")
+
+    else:
+        rerun_muni_tuples = [i.split(": ") for i in muni_missed_municipal]
+        for m in rerun_muni_tuples:
+            print("-" * 5)
+            missed_municode, keys_written = rerun(muni_code_scraper.municode_scraper, s3_bucket, s3_path, rs_table, base_loc, m)
+            if missed_municode:
+                missed_municipal.append(missed_municode)
+                for key in keys_written:
+                    if key not in keys_written_municode:
+                        keys_written_municode += keys_written
+            else:
+                for key in keys_written:
+                    if key not in keys_written_municode:
+                        keys_written_municode += keys_written
 
     if len(keys_written_municode) > 0:
         new_table_rows = table_builder(s3_bucket, keys_written_municode, rs_table)
@@ -89,16 +105,33 @@ def main():
 
     # get data from codepub
     missed_len = len(missed_municipal)
+    codepub_missed_municipal = []
     keys_written_codepub = []
     for city, link in list(zip(df_codepub["city"], df_codepub["links"])):
         print("-"*5)
         missed_codepub, keys_written = rerun(codepub_scraper.code_pub_main, s3_bucket, s3_path, rs_table, base_loc, [city, link])
         if missed_codepub:
-            missed_municipal.append(missed_codepub)
+            codepub_missed_municipal.append(missed_codepub)
         else:
             keys_written_codepub += keys_written
-    if missed_len == len(missed_municipal):
+    if not codepub_missed_municipal:
         print("code publishing links successfully crawled")
+    else:
+        rerun_codepub_tuples = [i.split(": ") for i in codepub_missed_municipal]
+        for city, link in rerun_codepub_tuples:
+            print("-" * 5)
+            link = [link.replace("[\'","").replace("\']","")]
+            missed_codepub, keys_written = rerun(codepub_scraper.code_pub_main, s3_bucket, s3_path, rs_table, base_loc, [city, link])
+            if missed_codepub:
+                missed_municipal.append(missed_codepub)
+                for key in keys_written:
+                    if key not in keys_written_codepub:
+                        keys_written_codepub += keys_written
+            else:
+                for key in keys_written:
+                    if key not in keys_written_codepub:
+                        keys_written_codepub += keys_written
+
     keys_written_codepub = [key for key in keys_written_codepub if key not in rs_table.s3_key.to_list()]
     if len(keys_written_codepub) > 0:
         new_table_rows = table_builder(s3_bucket, keys_written_codepub, rs_table)
@@ -124,7 +157,6 @@ def main():
         create_doc_table(new_table_rows, s3_bucket, cache_table, red_db)
         append_new_rows(cache_table, red_table, red_db)
 
-
     # get data from amlegal (aka SF)
     missed_len = len(missed_municipal)
     keys_written_amlegal = []
@@ -138,6 +170,7 @@ def main():
         keys_written_amlegal += keys_written
     if missed_len == len(missed_municipal):
         print("amlegal link successfully crawled")
+
     keys_written_amlegal = [key for key in keys_written_amlegal if key not in rs_table.s3_key.to_list()]
     if len(keys_written_amlegal) > 0:
         new_table_rows = table_builder(s3_bucket, keys_written_amlegal, rs_table)
@@ -145,9 +178,13 @@ def main():
         append_new_rows(cache_table, red_table, red_db)
 
 
+
+
     # display which municipals failed
     if len(missed_municipal) > 0:
         for item in missed_municipal:
             print(item)
+
+
 if __name__ == '__main__':
     main()
